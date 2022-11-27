@@ -74,9 +74,6 @@ function toggleSettingsDialog () {
     justify-content: space-between;
     width: 5em;
     height: 100vh;
-    position: fixed;
-    top: 0;
-    left: 0;
 }
 
 .sideBar > .top {
