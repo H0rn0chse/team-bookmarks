@@ -1,11 +1,16 @@
+<script setup>
+import SearchBar from "@/components/SearchBar.vue";
+import SideBar from "@/components/SideBar.vue";
+</script>
+
 <template>
-    <v-app>
+    <v-app theme="dark">
         <v-main>
             <SearchBar />
+            <SideBar />
         </v-main>
     </v-app>
 </template>
 
-<script setup>
-import SearchBar from "@/components/SearchBar.vue";
-</script>
+<style>
+</style>

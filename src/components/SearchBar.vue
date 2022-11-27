@@ -1,5 +1,5 @@
 <script setup>
-import { reactive, computed } from "vue";
+import { reactive } from "vue";
 import { useMainStore } from "@/stores/main";
 
 const mainStore = useMainStore();
@@ -11,10 +11,10 @@ const combobox = reactive({
 </script>
 
 <template>
-    <div class="searchBarComponent">
+    <div class="searchBarComponent d-flex align-center justify-center">
         <div class="searchBarWrapper">
             <v-combobox
-                class="searchBar"
+                bg-color="background-light"
                 v-model="mainStore.searchTerms"
                 :delimiters="combobox.delimiters"
                 label="Enter Search Terms"
@@ -29,9 +29,6 @@ const combobox = reactive({
 
 <style scoped>
 .searchBarComponent {
-    display: flex;
-    align-items: center;
-    justify-content: center;
     top: 0;
     position: sticky;
     padding: 2em;
