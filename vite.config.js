@@ -33,4 +33,7 @@ export default defineConfig({
   server: {
     port: 3000,
   },
+  build: {
+    outDir: fileURLToPath(new URL('./docs', import.meta.url))
+  }
 })
