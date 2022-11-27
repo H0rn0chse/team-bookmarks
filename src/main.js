@@ -4,6 +4,9 @@
  * Bootstraps Vuetify and other plugins then mounts the App`
  */
 
+// Github-Corner
+import "wc-github-corners";
+
 // Components
 import App from "./App.vue";
 

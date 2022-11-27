@@ -24,6 +24,7 @@ const icons = reactive({
                 :stroke="icons.color"
                 type="settings"
                 v-bind="props"
+                class="icon"
             />
         </template>
         <v-card>
@@ -44,6 +45,8 @@ const icons = reactive({
 </template>
 
 
-<style>
-
+<style scoped>
+.icon {
+    cursor: pointer;
+}
 </style>

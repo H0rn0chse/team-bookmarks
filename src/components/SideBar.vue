@@ -25,15 +25,12 @@ function toggleSettingsDialog () {
         <div
             class="top d-flex flex-column align-center"
         >
-
                 <SettingsDialog
                     :show="settings.showDialog"
                     @close="toggleSettingsDialog"
                     title="Settings"
                     class="sideItem"
-                >
-
-                </SettingsDialog>
+                />
             <div
                 title="Import"
                 class="sideItem"
