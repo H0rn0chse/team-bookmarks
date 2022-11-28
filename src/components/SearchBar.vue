@@ -11,7 +11,7 @@ const combobox = reactive({
 </script>
 
 <template>
-    <div class="searchBarComponent d-flex align-center justify-center">
+    <div class="searchBarComponent d-flex align-start justify-center">
         <div class="searchBarWrapper">
             <v-combobox
                 bg-color="background-light"
@@ -29,12 +29,12 @@ const combobox = reactive({
 
 <style scoped>
 .searchBarComponent {
-    top: 0;
-    position: sticky;
-    padding: 2em;
+    width: 100%;
+    height: 100%;
 }
 
 .searchBarWrapper {
-    width: 60vw;
+    width: 70%;
+    margin-top: 3em;
 }
 </style>

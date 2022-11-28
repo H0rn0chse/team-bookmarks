@@ -8,26 +8,12 @@ const icons = reactive({
     color: getColor("--common-font-primary")
 });
 
-const settings = reactive({
-    showDialog: false
-});
-
-function toggleSettingsDialog () {
-    settings.showDialog = !settings.showDialog;
-}
-
 </script>
 
 <template>
-    <div
-        class="sideBar d-flex flex-column align-center bg-background-dark"
-    >
-        <div
-            class="top d-flex flex-column align-center"
-        >
+    <div class="sideBar d-flex flex-column align-center bg-background-dark">
+        <div class="top d-flex flex-column align-center">
                 <SettingsDialog
-                    :show="settings.showDialog"
-                    @close="toggleSettingsDialog"
                     title="Settings"
                     class="sideItem"
                 />
@@ -52,9 +38,7 @@ function toggleSettingsDialog () {
                 />
             </div>
         </div>
-        <div
-            class="bottom d-flex flex-column align-center"
-        >
+        <div class="bottom d-flex flex-column align-center">
             <div
                 title="Add new Bookmark"
                 class="sideItem"
@@ -72,12 +56,12 @@ function toggleSettingsDialog () {
 <style scoped>
 .sideBar {
     justify-content: space-between;
-    width: 5em;
-    height: 100vh;
+    width: 100%;
+    height: 100%;
 }
 
 .sideBar > .top {
-    margin-top: 1em;
+    margin-top: 2em;
 }
 
 .sideBar > .bottom {

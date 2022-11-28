@@ -34,15 +34,10 @@ const state = reactive({
 }
 
 .cont {
-    height: 80vh;
-    width: calc(100% - 4em);
+    height: 100%;
+    width: 100%;
     overflow-y: scroll;
-    background-color: var(--common-bg-light);
-    border-radius: 5px;
-}
 
-.cont::-webkit-scrollbar {
-    display: "inherit";
 }
 
 </style>
