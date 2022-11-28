@@ -92,7 +92,7 @@ function deleteBookmark (evt) {
     padding-left: 0.5em;
 }
 .item {
-    width: 30em;
+    max-width: 30em;
     background-color: var(--common-bg-light);
     border-color: var(--common-input-border);
     border-width: 2px;
@@ -102,16 +102,28 @@ function deleteBookmark (evt) {
     padding: 0.5em;
 }
 
+@media only screen and (min-width: 960px) {
+  .item {
+    width: 30em;
+  }
+}
+
 .cont {
     height: 100%;
     width: 100%;
     overflow-y: scroll;
     overflow-x: hidden;
-    padding: 4em;
+    padding: 1em;
     flex-wrap: wrap;
     justify-content: flex-start;
     align-items: flex-start;
     align-content: flex-start;
+}
+
+@media only screen and (min-width: 1264px) {
+  .cont {
+    padding: 4em;
+  }
 }
 
 </style>
