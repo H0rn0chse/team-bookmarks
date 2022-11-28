@@ -1,44 +1,31 @@
-# default
+# Team-Bookmarks
+
+more description & documentation is in progress
 
 ## Project setup
 
+1. Installing dependencies
 ```
-# yarn
-yarn
-
-# npm
 npm install
-
-# pnpm
-pnpm install
 ```
-
-### Compiles and hot-reloads for development
-
+2. Install Pre-commit hook
 ```
-# yarn
-yarn dev
-
-# npm
+npm run copy-pre-commit
+```
+3. Start dev setup (hot-reloads)
+```
 npm run dev
-
-# pnpm
-pnpm dev
 ```
-
-### Compiles and minifies for production
-
+4. Build for production (automatically done by pre-commit hook)
 ```
-# yarn
-yarn build
-
-# npm
 npm run build
-
-# pnpm
-pnpm build
 ```
 
-### Customize configuration
-
-See [Configuration Reference](https://vitejs.dev/config/).
+## Libraries
+ * Github Corners [github.com/YunYouJun/wc-github-corners](https://github.com/YunYouJun/wc-github-corners)
+ * Icons [github.com/feathericons/feather](https://github.com/feathericons/feather)
+ * More Icons [github.com/Templarian/MaterialDesign](https://github.com/Templarian/MaterialDesign)
+ * Vue [vuejs.org](https://vuejs.org/)
+ * Pinia [pinia.vuejs.org](https://pinia.vuejs.org/)
+ * Vuetify [next.vuetifyjs.com/en/](https://next.vuetifyjs.com/en/)
+ * Vite [vitejs.dev/](https://vitejs.dev/)

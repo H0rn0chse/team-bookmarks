@@ -1,28 +1,29 @@
 {
   "name": "team-bookmarks",
-  "version": "0.0.0",
+  "version": "0.0.1",
+  "type": "module",
   "scripts": {
     "dev": "vite",
     "build": "vite build",
     "preview": "vite preview",
-    "install-pre-commit": "copy scripts/pre-commit .git/hooks/"
+    "copy-pre-commit": "node scripts/copyPreCommit"
   },
   "dependencies": {
     "@mdi/font": "7.0.96",
     "feather-icons": "^4.29.0",
-    "pinia": "^2.0.24",
-    "roboto-fontface": "*",
+    "pinia": "^2.0.27",
+    "roboto-fontface": "^0.10.0",
     "vue": "^3.2.45",
     "vue-feather": "^2.0.0",
-    "vuetify": "^3.0.0",
+    "vuetify": "^3.0.2",
     "wc-github-corners": "^0.1.5",
-    "webfontloader": "^1.0.0"
+    "webfontloader": "^1.6.28"
   },
   "devDependencies": {
-    "@vitejs/plugin-vue": "^3.0.3",
+    "@vitejs/plugin-vue": "^3.2.0",
     "eslint": "^8.28.0",
-    "eslint-plugin-vue": "^9.7.0",
-    "vite": "^3.1.9",
-    "vite-plugin-vuetify": "^1.0.0-alpha.12"
+    "eslint-plugin-vue": "^9.8.0",
+    "vite": "^3.2.4",
+    "vite-plugin-vuetify": "^1.0.0"
   }
 }
