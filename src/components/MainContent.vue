@@ -14,13 +14,17 @@ const peraparedItems = computed(() => {
             itemColor: item.groupColor || "var(--common-font-primary)",
             itemBackground: item.groupBackground || "var(--common-bg-light)",
             favoriteStroke: item.favorite ? "var(--common-favorite)" : iconColor,
+            //favoriteStroke: iconColor,
             favoriteFill: item.favorite ? "var(--common-favorite)" : "none",
+            // favoriteFill: item.favorite ? iconColor : "none",
         };
     })
 });
 
 function toggleFavorite (itemId) {
-    alert(`toggleFavorite: ${itemId}`);
+    //alert(`toggleFavorite: ${itemId}`);
+    const item = mainStore.items.find(item => item.id === itemId);
+    item.favorite = !item.favorite;
 }
 function showBookmarkDetail (itemId) {
     alert(`show more: ${itemId}`);
