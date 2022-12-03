@@ -1,6 +1,5 @@
 <script setup>
 import { reactive } from "vue";
-import { getColor } from "@/js/utils";
 
 const state = reactive({
     show: false
@@ -8,7 +7,7 @@ const state = reactive({
 
 const icons = reactive({
     size: "3em",
-    color: getColor("--common-font-primary")
+    color: "var(--common-font-primary)"
 });
 
 </script>

@@ -1,84 +1,107 @@
 <script setup>
-import { reactive } from "vue";
+import { readonly, computed, ref } from "vue";
 import { useMainStore } from "@/stores/main";
-import { getColor } from "@/js/utils";
 
 const mainStore = useMainStore();
 
-const icons = reactive({
+const icons = readonly({
     size: "1.5em",
-    color: getColor("--common-font-primary")
+    color: "var(--common-font-primary)",
+    favorite: "var(--common-favorite)",
 });
 
-function highlightBookmark (evt) {
-    evt.preventDefault();
-    alert("highlight");
+const favoriteStroke = computed(() => (item) => {
+        return item.favorite ? icons.favorite : icons.color;
+});
+const favoriteFill = computed(() => (item) => {
+        return item.favorite ? icons.favorite : "none";
+});
+
+function toggleFavorite (evt) {
+    alert("toggleFavorite");
 }
-function editBookmark (evt) {
-    evt.preventDefault();
-    alert("edit");
+function showBookmarkDetail (evt) {
+    alert("more");
 }
-function hideBookmark (evt) {
-    evt.preventDefault();
-    alert("hide");
-}
-function deleteBookmark (evt) {
-    evt.preventDefault();
-    alert("delete");
+
+const container = ref(null)
+function scrollTop () {
+    container.value.scrollTop = 0;
 }
 </script>
 
 <template>
-    <div class="cont d-flex">
+    <div class="container d-flex" ref="container">
         <ul v-for="item in mainStore.filteredItems" :key="item.id">
-            <a
+            <div
                 class="item d-flex align-center"
-                :href="item.src"
-                target="_blank"
             >
-                <span>{{ item.title }}</span>
+                <a
+                    class="d-flex align-center"
+                    :href="item.src"
+                    target="_blank"
+                >
+                    {{ item.title }}
+                    <vue-feather
+                        size="1em"
+                        :stroke="icons.color"
+                        type="external-link"
+                        style="marginLeft:0.2em;"
+                    />
+                </a>
                 <vue-feather
                     class="itemIcon"
                     :size="icons.size"
-                    :stroke="icons.color"
+                    :stroke="favoriteStroke(item)"
+                    :fill="favoriteFill(item)"
                     type="star"
-                    @click="highlightBookmark"
-                />
-                <vue-feather
-                    class="itemIcon"
-                    :size="icons.size"
-                    :stroke="icons.color"
-                    type="edit-2"
-                    @click="editBookmark"
+                    @click="toggleFavorite"
                 />
                 <span class="end d-flex align-center">
                     <vue-feather
                         class="itemIcon"
                         :size="icons.size"
                         :stroke="icons.color"
-                        type="eye-off"
-                        @click="hideBookmark"
-                    />
-                    <vue-feather
-                        class="itemIcon"
-                        :size="icons.size"
-                        :stroke="icons.color"
-                        type="trash-2"
-                        @click="deleteBookmark"
+                        type="more-horizontal"
+                        @click="showBookmarkDetail"
                     />
                 </span>
-            </a>
+            </div>
         </ul>
+        <v-btn
+            id="btn-toTop"
+            title="Scroll to Top"
+            color="primary"
+            icon
+        >
+            <vue-feather
+                size="2em"
+                stroke="var(--common-font-primary)"
+                type="chevrons-up"
+                @click="scrollTop"
+            />
+        </v-btn>
     </div>
 </template>
 
 <style scoped>
+a, a:visited {
+    color: var(--common-font-primary);
+}
+
+#btn-toTop {
+    position: fixed;
+    bottom: 4em;
+    right: 4em;
+}
+
 .end {
     flex-grow: 1;
     justify-content: flex-end;
 }
 .itemIcon {
     padding-left: 1em;
+    cursor: pointer;
 }
 .end > .itemIcon {
     padding-left: 0.5em;
@@ -86,10 +109,10 @@ function deleteBookmark (evt) {
 .item {
     max-width: 30em;
     background-color: var(--common-bg-light);
-    border-color: var(--common-input-border);
+    border-color: var(--common-font-secondary);
     border-width: 2px;
     border-style: solid;
-    border-radius: 5px;
+    border-radius: 10px;
     margin: 1em;
     padding: 0.5em;
 }
@@ -100,7 +123,7 @@ function deleteBookmark (evt) {
   }
 }
 
-.cont {
+.container {
     height: 100%;
     width: 100%;
     overflow-y: scroll;
@@ -113,9 +136,8 @@ function deleteBookmark (evt) {
 }
 
 @media only screen and (min-width: 1264px) {
-  .cont {
+  .container {
     padding: 4em;
   }
 }
-
 </style>

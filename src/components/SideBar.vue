@@ -1,11 +1,10 @@
 <script setup>
 import { reactive } from "vue";
-import { getColor } from "@/js/utils";
 import SettingsDialog from "@/components/SettingsDialog.vue";
 
 const icons = reactive({
     size: "3em",
-    color: getColor("--common-font-primary")
+    color: "var(--common-font-primary)"
 });
 
 </script>
