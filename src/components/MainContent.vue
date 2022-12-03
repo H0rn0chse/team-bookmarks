@@ -1,23 +1,15 @@
 <script setup>
 import { reactive } from "vue";
+import { useMainStore } from "@/stores/main";
 import { getColor } from "@/js/utils";
+
+const mainStore = useMainStore();
 
 const icons = reactive({
     size: "1.5em",
     color: getColor("--common-font-primary")
 });
 
-const state = reactive({
-    items: new Array(80)
-        .fill({})
-        .map((item, index) => {
-            return {
-                id: index,
-                text: `Item No. ${index.toString().padStart(2, "0")}`,
-                href: "https://sap.com"
-            };
-        })
-});
 function highlightBookmark (evt) {
     evt.preventDefault();
     alert("highlight");
@@ -38,13 +30,13 @@ function deleteBookmark (evt) {
 
 <template>
     <div class="cont d-flex">
-        <ul v-for="item in state.items" :key="item.id">
+        <ul v-for="item in mainStore.filteredItems" :key="item.id">
             <a
                 class="item d-flex align-center"
-                :href="item.href"
+                :href="item.src"
                 target="_blank"
             >
-                <span>{{ item.text }}</span>
+                <span>{{ item.title }}</span>
                 <vue-feather
                     class="itemIcon"
                     :size="icons.size"
