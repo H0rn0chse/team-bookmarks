@@ -7,6 +7,18 @@ const icons = reactive({
     color: "var(--common-font-primary)"
 });
 
+function importData () {
+    alert("import");
+}
+
+function exportData () {
+    alert("export");
+}
+
+function showAddItemDialog () {
+    alert("add");
+}
+
 </script>
 
 <template>
@@ -24,6 +36,7 @@ const icons = reactive({
                     :size="icons.size"
                     :stroke="icons.color"
                     type="upload-cloud"
+                    @click="importData"
                 />
             </div>
             <div
@@ -34,6 +47,7 @@ const icons = reactive({
                     :size="icons.size"
                     :stroke="icons.color"
                     type="download-cloud"
+                    @click="exportData"
                 />
             </div>
         </div>
@@ -46,6 +60,7 @@ const icons = reactive({
                     :size="icons.size"
                     :stroke="icons.color"
                     type="plus-square"
+                    @click="showAddItemDialog"
                 />
             </div>
         </div>

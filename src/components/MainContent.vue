@@ -1,27 +1,29 @@
 <script setup>
-import { readonly, computed, ref } from "vue";
+import { computed, ref } from "vue";
 import { useMainStore } from "@/stores/main";
 
 const mainStore = useMainStore();
 
-const icons = readonly({
-    size: "1.5em",
-    color: "var(--common-font-primary)",
-    favorite: "var(--common-favorite)",
+const peraparedItems = computed(() => {
+    return mainStore.filteredItems.map(item => {
+        const iconColor = item.groupColor || "var(--common-font-primary)";
+        return {
+            ...item,
+            iconColor,
+            iconSize: "1.5em",
+            itemColor: item.groupColor || "var(--common-font-primary)",
+            itemBackground: item.groupBackground || "var(--common-bg-light)",
+            favoriteStroke: item.favorite ? "var(--common-favorite)" : iconColor,
+            favoriteFill: item.favorite ? "var(--common-favorite)" : "none",
+        };
+    })
 });
 
-const favoriteStroke = computed(() => (item) => {
-        return item.favorite ? icons.favorite : icons.color;
-});
-const favoriteFill = computed(() => (item) => {
-        return item.favorite ? icons.favorite : "none";
-});
-
-function toggleFavorite (evt) {
-    alert("toggleFavorite");
+function toggleFavorite (itemId) {
+    alert(`toggleFavorite: ${itemId}`);
 }
-function showBookmarkDetail (evt) {
-    alert("more");
+function showBookmarkDetail (itemId) {
+    alert(`show more: ${itemId}`);
 }
 
 const container = ref(null)
@@ -32,9 +34,10 @@ function scrollTop () {
 
 <template>
     <div class="container d-flex" ref="container">
-        <ul v-for="item in mainStore.filteredItems" :key="item.id">
+        <ul v-for="item in peraparedItems" :key="item.id">
             <div
                 class="item d-flex align-center"
+                :style="{ backgroundColor: item.itemBackground, color: item.itemColor, borderColor: item.itemColor }"
             >
                 <a
                     class="d-flex align-center"
@@ -44,26 +47,26 @@ function scrollTop () {
                     {{ item.title }}
                     <vue-feather
                         size="1em"
-                        :stroke="icons.color"
+                        :stroke="item.iconColor"
                         type="external-link"
                         style="marginLeft:0.2em;"
                     />
                 </a>
                 <vue-feather
                     class="itemIcon"
-                    :size="icons.size"
-                    :stroke="favoriteStroke(item)"
-                    :fill="favoriteFill(item)"
+                    :size="item.iconSize"
+                    :stroke="item.favoriteStroke"
+                    :fill="item.favoriteFill"
                     type="star"
-                    @click="toggleFavorite"
+                    @click="toggleFavorite(item.id)"
                 />
                 <span class="end d-flex align-center">
                     <vue-feather
                         class="itemIcon"
-                        :size="icons.size"
-                        :stroke="icons.color"
+                        :size="item.iconSize"
+                        :stroke="item.iconColor"
                         type="more-horizontal"
-                        @click="showBookmarkDetail"
+                        @click="showBookmarkDetail(item.id)"
                     />
                 </span>
             </div>
@@ -86,7 +89,7 @@ function scrollTop () {
 
 <style scoped>
 a, a:visited {
-    color: var(--common-font-primary);
+    color: inherit;
 }
 
 #btn-toTop {
@@ -108,7 +111,6 @@ a, a:visited {
 }
 .item {
     max-width: 30em;
-    background-color: var(--common-bg-light);
     border-color: var(--common-font-secondary);
     border-width: 2px;
     border-style: solid;
