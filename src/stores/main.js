@@ -52,7 +52,7 @@ export const useMainStore = defineStore("main", {
                         groupTitle: group?.title ?? "",
                         groupColor: group?.color ?? "",
                         groupBackground: group?.background ?? "",
-                    }
+                    };
                 })
                 // remove all hidden items
                 .filter(item => !item.hidden)

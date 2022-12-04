@@ -1,8 +1,11 @@
 <script setup>
-import { reactive } from "vue";
+import { reactive, readonly } from "vue";
 import SettingsDialog from "@/components/SettingsDialog.vue";
+import { useDialogStore } from "@/stores/dialog";
 
-const icons = reactive({
+const dialogStore = useDialogStore();
+
+const icons = readonly({
     size: "3em",
     color: "var(--common-font-primary)"
 });
@@ -22,49 +25,54 @@ function showAddItemDialog () {
 </script>
 
 <template>
-    <div class="sideBar d-flex flex-column align-center bg-background-dark">
-        <div class="top d-flex flex-column align-center">
-                <SettingsDialog
-                    title="Settings"
-                    class="sideItem"
-                />
-            <div
-                title="Import"
-                class="sideItem"
-            >
-                <vue-feather
-                    :size="icons.size"
-                    :stroke="icons.color"
-                    type="upload-cloud"
-                    @click="importData"
-                />
-            </div>
-            <div
-                title="Export"
-                class="sideItem"
-            >
-                <vue-feather
-                    :size="icons.size"
-                    :stroke="icons.color"
-                    type="download-cloud"
-                    @click="exportData"
-                />
-            </div>
-        </div>
-        <div class="bottom d-flex flex-column align-center">
-            <div
-                title="Add new Bookmark"
-                class="sideItem"
-            >
-                <vue-feather
-                    :size="icons.size"
-                    :stroke="icons.color"
-                    type="plus-square"
-                    @click="showAddItemDialog"
-                />
-            </div>
-        </div>
+  <div class="sideBar d-flex flex-column align-center bg-background-dark">
+    <div class="top d-flex flex-column align-center">
+      <vue-feather
+        :size="icons.size"
+        :stroke="icons.color"
+        type="settings"
+        title="Settings"
+        class="sideItem"
+        @click="dialogStore.showSettings"
+      />
+      <div
+        title="Import"
+        class="sideItem"
+      >
+        <vue-feather
+          :size="icons.size"
+          :stroke="icons.color"
+          type="upload-cloud"
+          @click="importData"
+        />
+      </div>
+      <div
+        title="Export"
+        class="sideItem"
+      >
+        <vue-feather
+          :size="icons.size"
+          :stroke="icons.color"
+          type="download-cloud"
+          @click="exportData"
+        />
+      </div>
     </div>
+    <div class="bottom d-flex flex-column align-center">
+      <div
+        title="Add new Bookmark"
+        class="sideItem"
+      >
+        <vue-feather
+          :size="icons.size"
+          :stroke="icons.color"
+          type="plus-square"
+          @click="showAddItemDialog"
+        />
+      </div>
+    </div>
+    <SettingsDialog />
+  </div>
 </template>
 
 <style scoped>

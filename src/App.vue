@@ -5,15 +5,19 @@ import MainContent from "@/components/MainContent.vue";
 </script>
 
 <template>
-    <v-app theme="dark" id="app" overflow-hidden>
-        <v-main>
-            <div id="gridContainer">
-                <SideBar style="gridArea:sideBar;"/>
-                <SearchBar style="gridArea:searchBar;" />
-                <MainContent style="gridArea:main;" />
-            </div>
-        </v-main>
-    </v-app>
+  <v-app
+    id="app"
+    theme="dark"
+    overflow-hidden
+  >
+    <v-main>
+      <div id="gridContainer">
+        <SideBar style="gridArea:sideBar;" />
+        <SearchBar style="gridArea:searchBar;" />
+        <MainContent style="gridArea:main;" />
+      </div>
+    </v-main>
+  </v-app>
 </template>
 
 <style scoped>

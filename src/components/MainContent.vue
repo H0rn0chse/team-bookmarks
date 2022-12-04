@@ -1,8 +1,11 @@
 <script setup>
 import { computed, ref } from "vue";
 import { useMainStore } from "@/stores/main";
+import { useDialogStore } from "@/stores/dialog";
+import EditItemDialog from "@/components/EditItemDialog.vue";
 
 const mainStore = useMainStore();
+const dialogStore = useDialogStore();
 
 const peraparedItems = computed(() => {
     return mainStore.filteredItems.map(item => {
@@ -18,7 +21,7 @@ const peraparedItems = computed(() => {
             favoriteFill: item.favorite ? "var(--common-favorite)" : "none",
             // favoriteFill: item.favorite ? iconColor : "none",
         };
-    })
+    });
 });
 
 function toggleFavorite (itemId) {
@@ -27,68 +30,77 @@ function toggleFavorite (itemId) {
     item.favorite = !item.favorite;
 }
 function showBookmarkDetail (itemId) {
-    alert(`show more: ${itemId}`);
+    // todo
+    console.error(`show more: ${itemId}`);
+    dialogStore.showEdit();
 }
 
-const container = ref(null)
+const container = ref(null);
 function scrollTop () {
     container.value.scrollTop = 0;
 }
 </script>
 
 <template>
-    <div class="container d-flex" ref="container">
-        <ul v-for="item in peraparedItems" :key="item.id">
-            <div
-                class="item d-flex align-center"
-                :style="{ backgroundColor: item.itemBackground, color: item.itemColor, borderColor: item.itemColor }"
-            >
-                <a
-                    class="d-flex align-center"
-                    :href="item.src"
-                    target="_blank"
-                >
-                    {{ item.title }}
-                    <vue-feather
-                        size="1em"
-                        :stroke="item.iconColor"
-                        type="external-link"
-                        style="marginLeft:0.2em;"
-                    />
-                </a>
-                <vue-feather
-                    class="itemIcon"
-                    :size="item.iconSize"
-                    :stroke="item.favoriteStroke"
-                    :fill="item.favoriteFill"
-                    type="star"
-                    @click="toggleFavorite(item.id)"
-                />
-                <span class="end d-flex align-center">
-                    <vue-feather
-                        class="itemIcon"
-                        :size="item.iconSize"
-                        :stroke="item.iconColor"
-                        type="more-horizontal"
-                        @click="showBookmarkDetail(item.id)"
-                    />
-                </span>
-            </div>
-        </ul>
-        <v-btn
-            id="btn-toTop"
-            title="Scroll to Top"
-            color="primary"
-            icon
+  <div
+    ref="container"
+    class="container d-flex"
+  >
+    <ul
+      v-for="item in peraparedItems"
+      :key="item.id"
+    >
+      <div
+        class="item d-flex align-center"
+        :style="{ backgroundColor: item.itemBackground, color: item.itemColor, borderColor: item.itemColor }"
+      >
+        <a
+          class="d-flex align-center"
+          :href="item.src"
+          target="_blank"
         >
-            <vue-feather
-                size="2em"
-                stroke="var(--common-font-primary)"
-                type="chevrons-up"
-                @click="scrollTop"
-            />
-        </v-btn>
-    </div>
+          {{ item.title }}
+          <vue-feather
+            size="1em"
+            :stroke="item.iconColor"
+            type="external-link"
+            style="marginLeft:0.2em;"
+          />
+        </a>
+        <vue-feather
+          class="itemIcon"
+          :size="item.iconSize"
+          :stroke="item.favoriteStroke"
+          :fill="item.favoriteFill"
+          type="star"
+          @click="toggleFavorite(item.id)"
+        />
+        <span class="end d-flex align-center">
+          <vue-feather
+            class="itemIcon"
+            :size="item.iconSize"
+            :stroke="item.iconColor"
+            type="more-horizontal"
+            @click="showBookmarkDetail(item.id)"
+          />
+        </span>
+      </div>
+    </ul>
+    <v-btn
+      id="btn-toTop"
+      title="Scroll to Top"
+      color="primary"
+      icon
+    >
+      <vue-feather
+        size="2em"
+        stroke="var(--common-font-primary)"
+        type="chevrons-up"
+        @click="scrollTop"
+      />
+    </v-btn>
+    <EditItemDialog />
+  </div>
 </template>
 
 <style scoped>

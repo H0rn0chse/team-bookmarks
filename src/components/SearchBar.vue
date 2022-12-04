@@ -11,20 +11,20 @@ const combobox = reactive({
 </script>
 
 <template>
-    <div class="searchBarComponent d-flex align-start justify-center">
-        <div class="searchBarWrapper">
-            <v-combobox
-                bg-color="background-light"
-                v-model="mainStore.searchTerms"
-                :delimiters="combobox.delimiters"
-                label="Enter Search Terms"
-                closable-chips
-                multiple
-                chips
-                clearable
-            />
-        </div>
+  <div class="searchBarComponent d-flex align-start justify-center">
+    <div class="searchBarWrapper">
+      <v-combobox
+        v-model="mainStore.searchTerms"
+        bg-color="background-light"
+        :delimiters="combobox.delimiters"
+        label="Enter Search Terms"
+        closable-chips
+        multiple
+        chips
+        clearable
+      />
     </div>
+  </div>
 </template>
 
 <style scoped>
