@@ -16,7 +16,7 @@
     "uuid": "^9.0.0",
     "vue": "^3.2.45",
     "vue-feather": "^2.0.0",
-    "vuetify": "^3.0.2",
+    "vuetify": "^3.0.3",
     "wc-github-corners": "^0.1.5",
     "webfontloader": "^1.6.28"
   },

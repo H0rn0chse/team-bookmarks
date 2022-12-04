@@ -1,11 +1,18 @@
 <script setup>
-import { reactive } from "vue";
+import { reactive, readonly } from "vue";
 import { useMainStore } from "@/stores/main";
 
 const mainStore = useMainStore();
 
-const combobox = reactive({
+const combobox = readonly({
     delimiters: [" ", ","],
+    menuProps: {
+        closeOnClick: false,
+        closeOnContentClick: false,
+        disableKeys: true,
+        openOnClick: false,
+        maxHeight: 304
+    }
 });
 
 </script>
@@ -15,9 +22,12 @@ const combobox = reactive({
     <div class="searchBarWrapper">
       <v-combobox
         v-model="mainStore.searchTerms"
+        :items="mainStore.searchKeywords"
         bg-color="background-light"
         :delimiters="combobox.delimiters"
         label="Enter Search Terms"
+        :menu-props="combobox.menuProps"
+        hide-selected
         closable-chips
         multiple
         chips

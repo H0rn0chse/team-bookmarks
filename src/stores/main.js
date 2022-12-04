@@ -43,6 +43,18 @@ export const useMainStore = defineStore("main", {
         };
     },
     getters: {
+        searchKeywords: (state) => {
+            const keywords = state.items
+                // remove all hidden items
+                .filter(item => !item.hidden)
+                .map(item => item.keywords)
+                .flat()
+                .filter(keyword => !state.searchTerms.includes(keyword));
+            return Array.from(new Set(keywords))
+                .sort((keywordA, keywordB) => {
+                    return keywordA.localeCompare(keywordB);
+                });
+        },
         filteredItems: (state) => {
             return state.items
                 .map(item => {

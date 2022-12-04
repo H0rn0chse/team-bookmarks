@@ -11,3 +11,11 @@ export function applyPers (pers) {
     //todo implement
     return pers;
 }
+
+export function savePers (pers) {
+    localStorage.setItem("personalization_team-bookmarks", JSON.stringify(pers));
+}
+
+export function getPers () {
+    return JSON.parse(localStorage.getItem("personalization_team"));
+}
