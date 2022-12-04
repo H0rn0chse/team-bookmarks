@@ -2,7 +2,6 @@
 import { computed, ref } from "vue";
 import { useMainStore } from "@/stores/main";
 import { useDialogStore } from "@/stores/dialog";
-import EditItemDialog from "@/components/EditItemDialog.vue";
 
 const mainStore = useMainStore();
 const dialogStore = useDialogStore();
@@ -99,7 +98,6 @@ function scrollTop () {
         @click="scrollTop"
       />
     </v-btn>
-    <EditItemDialog />
   </div>
 </template>
 

@@ -1,7 +1,7 @@
 <script setup>
 import { reactive, readonly } from "vue";
-import SettingsDialog from "@/components/SettingsDialog.vue";
 import { useDialogStore } from "@/stores/dialog";
+import { importData, exportData } from "@/js/ImportExport";
 
 const dialogStore = useDialogStore();
 
@@ -10,16 +10,22 @@ const icons = readonly({
     color: "var(--common-font-primary)"
 });
 
-function importData () {
-    alert("import");
+async function importDataLocal () {
+    console.log ("starting import");
+    await importData();
+    console.log ("import done");
 }
 
-function exportData () {
-    alert("export");
+async function exportDataLocal () {
+    console.log("starting export");
+    await exportData();
+    console.log("export done");
 }
 
 function showAddItemDialog () {
-    alert("add");
+    // todo
+    console.error("show add");
+    dialogStore.showAdd();
 }
 
 </script>
@@ -43,7 +49,7 @@ function showAddItemDialog () {
           :size="icons.size"
           :stroke="icons.color"
           type="upload-cloud"
-          @click="importData"
+          @click="importDataLocal"
         />
       </div>
       <div
@@ -54,7 +60,7 @@ function showAddItemDialog () {
           :size="icons.size"
           :stroke="icons.color"
           type="download-cloud"
-          @click="exportData"
+          @click="exportDataLocal"
         />
       </div>
     </div>
@@ -71,7 +77,6 @@ function showAddItemDialog () {
         />
       </div>
     </div>
-    <SettingsDialog />
   </div>
 </template>
 

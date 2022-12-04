@@ -2,6 +2,9 @@
 import SearchBar from "@/components/SearchBar.vue";
 import SideBar from "@/components/SideBar.vue";
 import MainContent from "@/components/MainContent.vue";
+import SettingsDialog from "@/components/SettingsDialog.vue";
+import EditItemDialog from "@/components/EditItemDialog.vue";
+import AddItemDialog from "@/components/AddItemDialog.vue";
 </script>
 
 <template>
@@ -16,6 +19,9 @@ import MainContent from "@/components/MainContent.vue";
         <SearchBar style="gridArea:searchBar;" />
         <MainContent style="gridArea:main;" />
       </div>
+      <SettingsDialog />
+      <EditItemDialog />
+      <AddItemDialog />
     </v-main>
   </v-app>
 </template>

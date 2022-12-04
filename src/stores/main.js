@@ -99,8 +99,8 @@ export const useMainStore = defineStore("main", {
         }
     },
     actions: {
-        increment() {
-            this.count++;
+        importData(data) {
+            alert("validate, migrate, import");
         },
     },
 });
