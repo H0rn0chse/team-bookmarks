@@ -2,9 +2,9 @@
 import SearchBar from "@/components/SearchBar.vue";
 import SideBar from "@/components/SideBar.vue";
 import MainContent from "@/components/MainContent.vue";
-import SettingsDialog from "@/components/SettingsDialog.vue";
-import EditItemDialog from "@/components/EditItemDialog.vue";
-import AddItemDialog from "@/components/AddItemDialog.vue";
+import SettingsDialog from "@/components/dialogs/SettingsDialog.vue";
+import EditItemDialog from "@/components/dialogs/EditItemDialog.vue";
+import AddItemDialog from "@/components/dialogs/AddItemDialog.vue";
 </script>
 
 <template>

@@ -1,6 +1,5 @@
 <script setup>
-import { reactive } from "vue";
-import ItemDetails from "@/components/ItemDetails.vue";
+import { reactive, readonly } from "vue";
 import { useDialogStore } from "@/stores/dialog";
 
 const dialogStore = useDialogStore();
@@ -9,23 +8,23 @@ const foo = reactive({
   bar: false
 });
 
+
 </script>
 
 <template>
   <v-dialog
-    v-model="dialogStore.editBookmark"
+    v-model="dialogStore.settings.show"
     transition="dialog-top-transition"
   >
     <v-card>
-      <v-card-title>Edit Bookmark</v-card-title>
       <v-card-text>
-        <ItemDetails />
+        Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
       </v-card-text>
       <v-card-actions>
         <v-btn
           color="primary"
           block
-          @click="dialogStore.hideEdit"
+          @click="dialogStore.hideSettings"
         >
           Close Dialog
         </v-btn>

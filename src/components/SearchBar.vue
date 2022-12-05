@@ -1,8 +1,8 @@
 <script setup>
-import { reactive, readonly } from "vue";
-import { useMainStore } from "@/stores/main";
+import { readonly } from "vue";
+import { useSearchStore } from "@/stores/search";
 
-const mainStore = useMainStore();
+const searchStore = useSearchStore();
 
 const combobox = readonly({
   delimiters: [" ", ","],
@@ -21,8 +21,8 @@ const combobox = readonly({
   <div class="searchBarComponent d-flex align-start justify-center">
     <div class="searchBarWrapper">
       <v-combobox
-        v-model="mainStore.searchTerms"
-        :items="mainStore.searchKeywords"
+        v-model="searchStore.searchTerms"
+        :items="searchStore.searchKeywords"
         bg-color="background-light"
         :delimiters="combobox.delimiters"
         label="Enter Search Terms"

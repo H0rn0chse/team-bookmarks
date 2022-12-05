@@ -2,12 +2,14 @@
 import { computed, ref } from "vue";
 import { useMainStore } from "@/stores/main";
 import { useDialogStore } from "@/stores/dialog";
+import { useSearchStore } from "@/stores/search";
 
 const mainStore = useMainStore();
+const searchStore = useSearchStore();
 const dialogStore = useDialogStore();
 
 const peraparedItems = computed(() => {
-  return mainStore.filteredItems.map(item => {
+  return searchStore.filteredItems.map(item => {
     const iconColor = item.groupColor || "var(--common-font-primary)";
     return {
       ...item,
@@ -24,14 +26,13 @@ const peraparedItems = computed(() => {
 });
 
 function toggleFavorite (itemId) {
-  //alert(`toggleFavorite: ${itemId}`);
-  const item = mainStore.items.find(item => item.id === itemId);
-  item.favorite = !item.favorite;
+  const item = mainStore.getItem(itemId);
+  const newFavoriteState = !item.favorite;
+  mainStore.updateItem(itemId, { favorite: newFavoriteState });
 }
 function showBookmarkDetail (itemId) {
-  // todo
   console.error(`show more: ${itemId}`);
-  dialogStore.showEdit();
+  dialogStore.showEdit(itemId);
 }
 
 const container = ref(null);

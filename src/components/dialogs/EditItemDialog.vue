@@ -13,11 +13,11 @@ const foo = reactive({
 
 <template>
   <v-dialog
-    v-model="dialogStore.addBookmark"
+    v-model="dialogStore.editBookmark.show"
     transition="dialog-top-transition"
   >
     <v-card>
-      <v-card-title>Add Bookmark</v-card-title>
+      <v-card-title>Edit Bookmark</v-card-title>
       <v-card-text>
         <ItemDetails />
       </v-card-text>
@@ -25,7 +25,7 @@ const foo = reactive({
         <v-btn
           color="primary"
           block
-          @click="dialogStore.hideAdd"
+          @click="dialogStore.hideEdit"
         >
           Close Dialog
         </v-btn>
