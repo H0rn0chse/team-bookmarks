@@ -1,4 +1,5 @@
 import { defineStore } from "pinia";
+import { useMainStore } from "@/stores/main";
 
 export const useDialogStore = defineStore("dialog", {
   state: () => {
@@ -6,14 +7,40 @@ export const useDialogStore = defineStore("dialog", {
       settings: {
         show: false,
       },
-      bookmarkDetails: {
-        itemId: null
+      emptyItem: {
+        hidden: false,
+        favorite: false,
+        group: null,
+        title: "",
+        src: "",
+        description: "",
+        keywords: []
+      },
+      itemDetails: {
+        hidden: false,
+        favorite: false,
+        group: null,
+        title: "",
+        src: "",
+        description: "",
+        keywords: []
       },
       editBookmark: {
         show: false,
+        itemId: null
       },
       addBookmark: {
-        show: false
+        show: false,
+        itemId: null,
+        defaultItem: {
+          hidden: false,
+          favorite: false,
+          group: null,
+          title: "New Item",
+          src: "https://sap.com",
+          description: "",
+          keywords: []
+        },
       },
     };
   },
@@ -25,19 +52,32 @@ export const useDialogStore = defineStore("dialog", {
       this.settings.show = false;
     },
     showEdit(itemId) {
-      this.bookmarkDetails.itemId = itemId;
+      const mainStore = useMainStore();
+
+      const item = mainStore.getItem(itemId) || this.emptyItem;
+      this.itemDetails = JSON.parse(JSON.stringify(item));
+
+      this.editBookmark.itemId = itemId;
       this.editBookmark.show = true;
     },
     hideEdit() {
-      this.bookmarkDetails.itemId = null;
+      this.itemDetails = JSON.parse(JSON.stringify(this.emptyItem));
+
+      this.editBookmark.itemId = null;
       this.editBookmark.show = false;
     },
     showAdd() {
-      this.bookmarkDetails.itemId = null;
+      const item = this.addBookmark.defaultItem;
+      this.itemDetails = JSON.parse(JSON.stringify(item));
+
+      // todo handle id generation
+      this.addBookmark.itemId = null;
       this.addBookmark.show = true;
     },
     hideAdd() {
-      this.bookmarkDetails.itemId = null;
+      this.itemDetails = JSON.parse(JSON.stringify(this.emptyItem));
+
+      this.addBookmark.itemId = null;
       this.addBookmark.show = false;
     },
   },

@@ -14,6 +14,8 @@ const foo = reactive({
 <template>
   <v-dialog
     v-model="dialogStore.addBookmark.show"
+    min-width="400"
+    max-width="800"
     transition="dialog-top-transition"
   >
     <v-card>
@@ -24,10 +26,15 @@ const foo = reactive({
       <v-card-actions>
         <v-btn
           color="primary"
-          block
           @click="dialogStore.hideAdd"
         >
-          Close Dialog
+          Add
+        </v-btn>
+        <v-btn
+          color="error"
+          @click="dialogStore.hideAdd"
+        >
+          Cancel
         </v-btn>
       </v-card-actions>
     </v-card>

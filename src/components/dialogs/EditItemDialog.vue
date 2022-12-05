@@ -14,6 +14,8 @@ const foo = reactive({
 <template>
   <v-dialog
     v-model="dialogStore.editBookmark.show"
+    min-width="400"
+    max-width="800"
     transition="dialog-top-transition"
   >
     <v-card>

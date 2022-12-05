@@ -1,14 +1,29 @@
 <script setup>
-import { reactive } from "vue";
+import { reactive, computed } from "vue";
 
-const stuff = reactive({
-});
+import { useDialogStore } from "@/stores/dialog";
+
+const dialogStore = useDialogStore();
 
 </script>
 
 <template>
   <div>
-    <p>Details</p>
+    <!-- TODO Favorite -->
+    <v-text-field
+      v-model="dialogStore.itemDetails.title"
+      label="Title"
+    />
+    <v-text-field
+      v-model="dialogStore.itemDetails.src"
+      label="Link"
+    />
+    <v-text-field
+      v-model="dialogStore.itemDetails.description"
+      label="Description"
+    />
+    <!-- TODO Group -->
+    <!-- TODO Keywords -->
   </div>
 </template>
 
