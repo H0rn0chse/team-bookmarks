@@ -6,26 +6,26 @@ import { importData, exportData } from "@/js/ImportExport";
 const dialogStore = useDialogStore();
 
 const icons = readonly({
-    size: "3em",
-    color: "var(--common-font-primary)"
+  size: "3em",
+  color: "var(--common-font-primary)"
 });
 
 async function importDataLocal () {
-    console.log ("starting import");
-    await importData();
-    console.log ("import done");
+  console.log ("starting import");
+  await importData();
+  console.log ("import done");
 }
 
 async function exportDataLocal () {
-    console.log("starting export");
-    await exportData();
-    console.log("export done");
+  console.log("starting export");
+  await exportData();
+  console.log("export done");
 }
 
 function showAddItemDialog () {
-    // todo
-    console.error("show add");
-    dialogStore.showAdd();
+  // todo
+  console.error("show add");
+  dialogStore.showAdd();
 }
 
 </script>

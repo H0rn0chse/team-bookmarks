@@ -5,7 +5,7 @@ import { useDialogStore } from "@/stores/dialog";
 const dialogStore = useDialogStore();
 
 const foo = reactive({
-    bar: false
+  bar: false
 });
 
 

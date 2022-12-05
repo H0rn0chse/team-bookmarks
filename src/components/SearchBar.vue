@@ -5,14 +5,14 @@ import { useMainStore } from "@/stores/main";
 const mainStore = useMainStore();
 
 const combobox = readonly({
-    delimiters: [" ", ","],
-    menuProps: {
-        closeOnClick: false,
-        closeOnContentClick: false,
-        disableKeys: true,
-        openOnClick: false,
-        maxHeight: 304
-    }
+  delimiters: [" ", ","],
+  menuProps: {
+    closeOnClick: false,
+    closeOnContentClick: false,
+    disableKeys: true,
+    openOnClick: false,
+    maxHeight: 304
+  }
 });
 
 </script>

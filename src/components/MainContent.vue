@@ -7,36 +7,36 @@ const mainStore = useMainStore();
 const dialogStore = useDialogStore();
 
 const peraparedItems = computed(() => {
-    return mainStore.filteredItems.map(item => {
-        const iconColor = item.groupColor || "var(--common-font-primary)";
-        return {
-            ...item,
-            iconColor,
-            iconSize: "1.5em",
-            itemColor: item.groupColor || "var(--common-font-primary)",
-            itemBackground: item.groupBackground || "var(--common-bg-light)",
-            favoriteStroke: item.favorite ? "var(--common-favorite)" : iconColor,
-            //favoriteStroke: iconColor,
-            favoriteFill: item.favorite ? "var(--common-favorite)" : "none",
-            // favoriteFill: item.favorite ? iconColor : "none",
-        };
-    });
+  return mainStore.filteredItems.map(item => {
+    const iconColor = item.groupColor || "var(--common-font-primary)";
+    return {
+      ...item,
+      iconColor,
+      iconSize: "1.5em",
+      itemColor: item.groupColor || "var(--common-font-primary)",
+      itemBackground: item.groupBackground || "var(--common-bg-light)",
+      favoriteStroke: item.favorite ? "var(--common-favorite)" : iconColor,
+      //favoriteStroke: iconColor,
+      favoriteFill: item.favorite ? "var(--common-favorite)" : "none",
+      // favoriteFill: item.favorite ? iconColor : "none",
+    };
+  });
 });
 
 function toggleFavorite (itemId) {
-    //alert(`toggleFavorite: ${itemId}`);
-    const item = mainStore.items.find(item => item.id === itemId);
-    item.favorite = !item.favorite;
+  //alert(`toggleFavorite: ${itemId}`);
+  const item = mainStore.items.find(item => item.id === itemId);
+  item.favorite = !item.favorite;
 }
 function showBookmarkDetail (itemId) {
-    // todo
-    console.error(`show more: ${itemId}`);
-    dialogStore.showEdit();
+  // todo
+  console.error(`show more: ${itemId}`);
+  dialogStore.showEdit();
 }
 
 const container = ref(null);
 function scrollTop () {
-    container.value.scrollTop = 0;
+  container.value.scrollTop = 0;
 }
 </script>
 
@@ -60,6 +60,7 @@ function scrollTop () {
         >
           {{ item.title }}
           <vue-feather
+            title="Open in New Tab"
             size="1em"
             :stroke="item.iconColor"
             type="external-link"
@@ -67,6 +68,7 @@ function scrollTop () {
           />
         </a>
         <vue-feather
+          title="Toggle Favorite"
           class="itemIcon"
           :size="item.iconSize"
           :stroke="item.favoriteStroke"
@@ -76,6 +78,7 @@ function scrollTop () {
         />
         <span class="end d-flex align-center">
           <vue-feather
+            title="Show Details"
             class="itemIcon"
             :size="item.iconSize"
             :stroke="item.iconColor"
