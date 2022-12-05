@@ -28,7 +28,11 @@ const keywordSuggestions = computed({
 
 <template>
   <div>
-    <!-- TODO Favorite -->
+    <v-checkbox
+      v-model="dialogStore.itemDetails.favorite"
+      label="Mark as Favorite"
+      color="font-dark"
+    />
     <v-text-field
       v-model="dialogStore.itemDetails.title"
       label="Title"

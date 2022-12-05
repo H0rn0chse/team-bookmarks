@@ -34,6 +34,7 @@ export default createVuetify({
           warning: "#FF8000",
           error: "#ff0000",
           //info: "#ff0000",
+          favorite: "#FFCC33",
         }
       }
     }

@@ -22,7 +22,7 @@ function addBookmark () {
       <v-card-text>
         <ItemDetails />
       </v-card-text>
-      <v-card-actions>
+      <v-card-actions class="d-flex justify-end">
         <v-btn
           color="primary"
           @click="addBookmark"
