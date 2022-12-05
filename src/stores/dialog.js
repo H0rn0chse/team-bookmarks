@@ -1,108 +1,110 @@
+import { ref } from "vue";
 import { defineStore } from "pinia";
 import { useMainStore } from "@/stores/main";
 import { clone } from "@/js/utils";
 
-export const useDialogStore = defineStore("dialog", {
-  state: () => {
-    return {
-      settings: {
-        show: false,
-      },
-      emptyItem: {
-        hidden: false,
-        favorite: false,
-        group: null,
-        title: "",
-        src: "",
-        description: "",
-        keywords: []
-      },
-      itemDetails: {
-        hidden: false,
-        favorite: false,
-        group: null,
-        title: "",
-        src: "",
-        description: "",
-        keywords: []
-      },
-      editBookmark: {
-        show: false,
-        itemId: null
-      },
-      addBookmark: {
-        show: false,
-        itemId: null,
-        defaultItem: {
-          hidden: false,
-          favorite: false,
-          group: null,
-          title: "New Item",
-          src: "https://sap.com",
-          description: "",
-          keywords: []
-        },
-      },
-    };
-  },
-  actions: {
-    showSettings () {
-      this.settings.show = true;
-    },
-    hideSettings () {
-      this.settings.show = false;
-    },
-    saveEditItem () {
-      const mainStore = useMainStore();
+export const useDialogStore = defineStore("dialog", () => {
+  const mainStore = useMainStore();
 
-      const item = clone(this.itemDetails);
+  const emptyItem = {
+    hidden: false,
+    favorite: false,
+    group: null,
+    title: "",
+    src: "",
+    description: "",
+    keywords: []
+  };
 
-      mainStore.updateItem(this.editBookmark.itemId, item);
-    },
-    deleteEditItem () {
-      const mainStore = useMainStore();
+  const defaultItem = {...emptyItem, ...{
+    title: "New Item",
+    src: "https://sap.com",
+  }};
 
-      mainStore.deleteItem(this.editBookmark.itemId);
-    },
-    hideEditItem () {
-      const mainStore = useMainStore();
+  // ================= Settings =================
+  const settings = ref({
+    show: false,
+  });
 
-      mainStore.updateItem(this.editBookmark.itemId, { hidden: true });
-    },
-    showEdit (itemId) {
-      const mainStore = useMainStore();
+  function showSettings () {
+    settings.value.show = true;
+  }
+  function hideSettings () {
+    settings.value.show = false;
+  }
 
-      const item = mainStore.getItem(itemId) || this.emptyItem;
-      this.itemDetails = clone(item);
+  // ================= Details =================
+  const itemDetails = ref(clone(emptyItem));
 
-      this.editBookmark.itemId = itemId;
-      this.editBookmark.show = true;
-    },
-    hideEdit () {
-      this.itemDetails = clone(this.emptyItem);
+  // ================= Edit =================
+  const editBookmark = ref({
+    show: false,
+    itemId: null
+  });
 
-      this.editBookmark.itemId = null;
-      this.editBookmark.show = false;
-    },
-    saveAddItem () {
-      const mainStore = useMainStore();
+  function saveEditItem () {
+    const item = clone(itemDetails);
 
-      const item = clone(this.itemDetails);
+    mainStore.updateItem(editBookmark.value.itemId, item);
+  }
+  function deleteEditItem () {
+    mainStore.deleteItem(editBookmark.value.itemId);
+  }
+  function hideEditItem () {
+    mainStore.updateItem(editBookmark.value.itemId, { hidden: true });
+  }
+  function showEdit (itemId) {
+    const item = mainStore.getItem(itemId) || emptyItem;
+    itemDetails.value = clone(item);
 
-      mainStore.addItem(item);
-    },
-    showAdd () {
-      const item = this.addBookmark.defaultItem;
-      this.itemDetails = clone(item);
+    editBookmark.value.itemId = itemId;
+    editBookmark.value.show = true;
+  }
+  function hideEdit () {
+    itemDetails.value = clone(emptyItem);
 
-      this.addBookmark.itemId = null;
-      this.addBookmark.show = true;
-    },
-    hideAdd () {
-      this.itemDetails = clone(this.emptyItem);
+    editBookmark.value.itemId = null;
+    editBookmark.value.show = false;
+  }
 
-      this.addBookmark.itemId = null;
-      this.addBookmark.show = false;
-    },
-  },
+  // ================= Add =================
+  const addBookmark = ref({
+    show: false,
+    itemId: null,
+  });
+
+  function saveAddItem () {
+    const item = clone(itemDetails.value);
+
+    mainStore.addItem(item);
+  }
+  function showAdd () {
+    itemDetails.value = clone(defaultItem);
+
+    addBookmark.value.itemId = null;
+    addBookmark.value.show = true;
+  }
+  function hideAdd () {
+    itemDetails.value = clone(emptyItem);
+
+    addBookmark.value.itemId = null;
+    addBookmark.value.show = false;
+  }
+
+  return {
+    settings,
+    showSettings,
+    hideSettings,
+    itemDetails,
+    editBookmark,
+    saveEditItem,
+    deleteEditItem,
+    hideEditItem,
+    showEdit,
+    hideEdit,
+    addBookmark,
+    saveAddItem,
+    showAdd,
+    hideAdd,
+  };
 });

@@ -1,5 +1,5 @@
 <script setup>
-import { reactive, readonly } from "vue";
+import { readonly } from "vue";
 import { useDialogStore } from "@/stores/dialog";
 import { importData, exportData } from "@/js/ImportExport";
 
@@ -23,8 +23,6 @@ async function exportDataLocal () {
 }
 
 function showAddItemDialog () {
-  // todo
-  console.error("show add");
   dialogStore.showAdd();
 }
 

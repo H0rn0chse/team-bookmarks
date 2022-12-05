@@ -1,13 +1,8 @@
 <script setup>
-import { reactive, readonly } from "vue";
+import {} from "vue";
 import { useDialogStore } from "@/stores/dialog";
 
 const dialogStore = useDialogStore();
-
-const foo = reactive({
-  bar: false
-});
-
 
 </script>
 

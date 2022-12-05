@@ -1,10 +1,10 @@
 <script setup>
 import { readonly, computed } from "vue";
 import { useDialogStore } from "@/stores/dialog";
-import { useSearchStore } from "@/stores/search";
+import { useMainStore } from "@/stores/main";
 
 const dialogStore = useDialogStore();
-const searchStore = useSearchStore();
+const mainStore = useMainStore();
 
 const combobox = readonly({
   delimiters: [" ", ","],
@@ -19,7 +19,7 @@ const combobox = readonly({
 
 const keywordSuggestions = computed({
   get () {
-    return searchStore.allKeywords
+    return mainStore.availableKeywords
       .filter(keyword => !dialogStore.itemDetails.keywords.includes(keyword));
   }
 });

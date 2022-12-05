@@ -9,7 +9,7 @@ const searchStore = useSearchStore();
 const dialogStore = useDialogStore();
 
 const peraparedItems = computed(() => {
-  return searchStore.filteredItems.map(item => {
+  return mainStore.allItems.map(item => {
     const iconColor = item.groupColor || "var(--common-font-primary)";
     return {
       ...item,
@@ -21,6 +21,7 @@ const peraparedItems = computed(() => {
       //favoriteStroke: iconColor,
       favoriteFill: item.favorite ? "var(--common-favorite)" : "none",
       // favoriteFill: item.favorite ? iconColor : "none",
+      display: searchStore.filteredItems.includes(item.id) ? "" : "none !important",
     };
   });
 });
@@ -31,7 +32,6 @@ function toggleFavorite (itemId) {
   mainStore.updateItem(itemId, { favorite: newFavoriteState });
 }
 function showBookmarkDetail (itemId) {
-  console.error(`show more: ${itemId}`);
   dialogStore.showEdit(itemId);
 }
 
@@ -42,53 +42,50 @@ function scrollTop () {
 </script>
 
 <template>
-  <div
+  <ul
     ref="container"
     class="container d-flex"
   >
-    <ul
+    <li
       v-for="item in peraparedItems"
       :key="item.id"
+      class="item d-flex align-center"
+      :style="{ backgroundColor: item.itemBackground, color: item.itemColor, borderColor: item.itemColor, display: item.display }"
     >
-      <div
-        class="item d-flex align-center"
-        :style="{ backgroundColor: item.itemBackground, color: item.itemColor, borderColor: item.itemColor }"
+      <a
+        class="d-flex align-center"
+        :href="item.src"
+        target="_blank"
       >
-        <a
-          class="d-flex align-center"
-          :href="item.src"
-          target="_blank"
-        >
-          {{ item.title }}
-          <vue-feather
-            title="Open in New Tab"
-            size="1em"
-            :stroke="item.iconColor"
-            type="external-link"
-            style="marginLeft:0.2em;"
-          />
-        </a>
+        {{ item.title }}
         <vue-feather
-          title="Toggle Favorite"
+          title="Open in New Tab"
+          size="1em"
+          :stroke="item.iconColor"
+          type="external-link"
+          style="marginLeft:0.2em;"
+        />
+      </a>
+      <vue-feather
+        title="Toggle Favorite"
+        class="itemIcon"
+        :size="item.iconSize"
+        :stroke="item.favoriteStroke"
+        :fill="item.favoriteFill"
+        type="star"
+        @click="toggleFavorite(item.id)"
+      />
+      <span class="end d-flex align-center">
+        <vue-feather
+          title="Show Details"
           class="itemIcon"
           :size="item.iconSize"
-          :stroke="item.favoriteStroke"
-          :fill="item.favoriteFill"
-          type="star"
-          @click="toggleFavorite(item.id)"
+          :stroke="item.iconColor"
+          type="more-horizontal"
+          @click="showBookmarkDetail(item.id)"
         />
-        <span class="end d-flex align-center">
-          <vue-feather
-            title="Show Details"
-            class="itemIcon"
-            :size="item.iconSize"
-            :stroke="item.iconColor"
-            type="more-horizontal"
-            @click="showBookmarkDetail(item.id)"
-          />
-        </span>
-      </div>
-    </ul>
+      </span>
+    </li>
     <v-btn
       id="btn-toTop"
       title="Scroll to Top"
@@ -102,7 +99,7 @@ function scrollTop () {
         @click="scrollTop"
       />
     </v-btn>
-  </div>
+  </ul>
 </template>
 
 <style scoped>
