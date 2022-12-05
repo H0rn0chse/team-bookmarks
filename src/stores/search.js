@@ -11,6 +11,18 @@ export const useSearchStore = defineStore("search", {
     };
   },
   getters: {
+    allKeywords () {
+      const main = useMainStore();
+      const keywords = main.items
+      // remove all hidden items
+        .filter(item => !item.hidden)
+        .map(item => item.keywords)
+        .flat();
+      return Array.from(new Set(keywords))
+        .sort((keywordA, keywordB) => {
+          return keywordA.localeCompare(keywordB);
+        });
+    },
     searchKeywords (state) {
       const main = useMainStore();
       const keywords = main.items
