@@ -45,7 +45,25 @@ export const useMainStore = defineStore("main", {
     getItem (itemId) {
       return this.items.find(item => item.id === itemId);
     },
-    updateItem(itemId, props) {
+    addItem (newItem) {
+      if (!newItem.id) {
+        // todo fix id generation
+        newItem.id = Date.now();
+      }
+      // todo ensure that all properties are set
+      this.items.push(newItem);
+      // todo persistence
+    },
+    deleteItem (itemId) {
+      const itemIndex = this.items.findIndex(item => item.id === itemId);
+      if (itemIndex > -1) {
+        this.items.splice(itemIndex, 1);
+      } else {
+        console.error(`Could not find item: ${itemId}`);
+      }
+      // todo persistence
+    },
+    updateItem (itemId, props) {
       const item = this.items.find(item => item.id === itemId);
       if (item) {
         Object.keys(props).forEach((key) => {
@@ -57,7 +75,7 @@ export const useMainStore = defineStore("main", {
       }
       // todo persist
     },
-    importData(data) {
+    importData (data) {
       alert("validate, migrate, import");
     },
   },

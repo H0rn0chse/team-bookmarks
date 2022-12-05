@@ -29,11 +29,11 @@ export default createVuetify({
           surface: "#dcddde",
           primary: "#0074d9",
           "primary-light": "#2f8ada",
-          secondary: "#ff0000",
-          success: "#ff0000",
+          //secondary: "#ff0000",
+          //success: "#ff0000",
           warning: "#FF8000",
           error: "#ff0000",
-          info: "#ff0000",
+          //info: "#ff0000",
         }
       }
     }

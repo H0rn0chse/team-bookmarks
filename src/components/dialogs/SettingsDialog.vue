@@ -14,6 +14,8 @@ const foo = reactive({
 <template>
   <v-dialog
     v-model="dialogStore.settings.show"
+    min-width="400"
+    max-width="1200"
     transition="dialog-top-transition"
   >
     <v-card>

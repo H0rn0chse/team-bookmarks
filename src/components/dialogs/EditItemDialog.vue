@@ -1,13 +1,25 @@
 <script setup>
-import { reactive } from "vue";
 import ItemDetails from "@/components/ItemDetails.vue";
 import { useDialogStore } from "@/stores/dialog";
 
 const dialogStore = useDialogStore();
 
-const foo = reactive({
-  bar: false
-});
+function deleteBookmark () {
+  // todo user confirmation
+  dialogStore.deleteEditItem();
+  dialogStore.hideEdit();
+}
+
+function hideBookmark () {
+  // todo check user confirmation
+  dialogStore.hideEditItem();
+  dialogStore.hideEdit();
+}
+
+function updateBookmark () {
+  dialogStore.saveEditItem();
+  dialogStore.hideEdit();
+}
 
 </script>
 
@@ -26,10 +38,28 @@ const foo = reactive({
       <v-card-actions>
         <v-btn
           color="primary"
-          block
+          @click="updateBookmark"
+        >
+          Save
+        </v-btn>
+
+        <v-btn
+          color="error"
+          @click="hideBookmark"
+        >
+          Hide
+        </v-btn>
+        <v-btn
+          color="error"
+          @click="deleteBookmark"
+        >
+          Delete
+        </v-btn>
+        <v-btn
+          color="black"
           @click="dialogStore.hideEdit"
         >
-          Close Dialog
+          Cancel
         </v-btn>
       </v-card-actions>
     </v-card>

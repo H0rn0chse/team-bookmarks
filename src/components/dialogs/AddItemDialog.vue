@@ -1,14 +1,13 @@
 <script setup>
-import { reactive } from "vue";
 import ItemDetails from "@/components/ItemDetails.vue";
 import { useDialogStore } from "@/stores/dialog";
 
 const dialogStore = useDialogStore();
 
-const foo = reactive({
-  bar: false
-});
-
+function addBookmark () {
+  dialogStore.saveAddItem();
+  dialogStore.hideAdd();
+}
 </script>
 
 <template>
@@ -26,12 +25,12 @@ const foo = reactive({
       <v-card-actions>
         <v-btn
           color="primary"
-          @click="dialogStore.hideAdd"
+          @click="addBookmark"
         >
           Add
         </v-btn>
         <v-btn
-          color="error"
+          color="black"
           @click="dialogStore.hideAdd"
         >
           Cancel

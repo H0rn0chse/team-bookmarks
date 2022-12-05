@@ -35,6 +35,10 @@ module.exports = {
       "error",
       "always"
     ],
+    "space-before-function-paren": [
+      "error",
+      "always"
+    ],
     "vue/html-indent": ["warn", 2, {
       "attribute": 1,
       "baseIndent": 1,

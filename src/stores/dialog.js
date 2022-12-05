@@ -1,5 +1,6 @@
 import { defineStore } from "pinia";
 import { useMainStore } from "@/stores/main";
+import { clone } from "@/js/utils";
 
 export const useDialogStore = defineStore("dialog", {
   state: () => {
@@ -45,37 +46,60 @@ export const useDialogStore = defineStore("dialog", {
     };
   },
   actions: {
-    showSettings() {
+    showSettings () {
       this.settings.show = true;
     },
-    hideSettings() {
+    hideSettings () {
       this.settings.show = false;
     },
-    showEdit(itemId) {
+    saveEditItem () {
+      const mainStore = useMainStore();
+
+      const item = clone(this.itemDetails);
+
+      mainStore.updateItem(this.editBookmark.itemId, item);
+    },
+    deleteEditItem () {
+      const mainStore = useMainStore();
+
+      mainStore.deleteItem(this.editBookmark.itemId);
+    },
+    hideEditItem () {
+      const mainStore = useMainStore();
+
+      mainStore.updateItem(this.editBookmark.itemId, { hidden: true });
+    },
+    showEdit (itemId) {
       const mainStore = useMainStore();
 
       const item = mainStore.getItem(itemId) || this.emptyItem;
-      this.itemDetails = JSON.parse(JSON.stringify(item));
+      this.itemDetails = clone(item);
 
       this.editBookmark.itemId = itemId;
       this.editBookmark.show = true;
     },
-    hideEdit() {
-      this.itemDetails = JSON.parse(JSON.stringify(this.emptyItem));
+    hideEdit () {
+      this.itemDetails = clone(this.emptyItem);
 
       this.editBookmark.itemId = null;
       this.editBookmark.show = false;
     },
-    showAdd() {
-      const item = this.addBookmark.defaultItem;
-      this.itemDetails = JSON.parse(JSON.stringify(item));
+    saveAddItem () {
+      const mainStore = useMainStore();
 
-      // todo handle id generation
+      const item = clone(this.itemDetails);
+
+      mainStore.addItem(item);
+    },
+    showAdd () {
+      const item = this.addBookmark.defaultItem;
+      this.itemDetails = clone(item);
+
       this.addBookmark.itemId = null;
       this.addBookmark.show = true;
     },
-    hideAdd() {
-      this.itemDetails = JSON.parse(JSON.stringify(this.emptyItem));
+    hideAdd () {
+      this.itemDetails = clone(this.emptyItem);
 
       this.addBookmark.itemId = null;
       this.addBookmark.show = false;

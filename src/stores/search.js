@@ -11,7 +11,7 @@ export const useSearchStore = defineStore("search", {
     };
   },
   getters: {
-    searchKeywords: (state) => {
+    searchKeywords (state) {
       const main = useMainStore();
       const keywords = main.items
       // remove all hidden items
@@ -24,7 +24,7 @@ export const useSearchStore = defineStore("search", {
           return keywordA.localeCompare(keywordB);
         });
     },
-    filteredItems: (state) => {
+    filteredItems (state) {
       const main = useMainStore();
       return main.items
         .map(item => {
