@@ -51,6 +51,7 @@ function scrollTop () {
       :key="item.id"
       tag="li"
       class="item"
+      min-height="calc(2.5em + 4px)"
       :style="{ backgroundColor: item.itemBackground, color: item.itemColor, borderColor: item.itemColor, display: item.display }"
     >
       <div class="d-flex align-center">
