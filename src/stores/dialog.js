@@ -16,10 +16,13 @@ export const useDialogStore = defineStore("dialog", () => {
     keywords: []
   };
 
-  const defaultItem = {...emptyItem, ...{
-    title: "New Item",
-    src: "https://sap.com",
-  }};
+  const defaultItem = {
+    ...emptyItem,
+    ...{
+      title: "New Item",
+      src: "https://sap.com",
+    }
+  };
 
   // ================= Settings =================
   const settings = ref({

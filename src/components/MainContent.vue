@@ -44,48 +44,51 @@ function scrollTop () {
 <template>
   <ul
     ref="container"
-    class="container d-flex"
+    class="container containerList"
   >
-    <li
+    <v-lazy
       v-for="item in peraparedItems"
       :key="item.id"
-      class="item d-flex align-center"
+      tag="li"
+      class="item"
       :style="{ backgroundColor: item.itemBackground, color: item.itemColor, borderColor: item.itemColor, display: item.display }"
     >
-      <a
-        class="d-flex align-center"
-        :href="item.src"
-        target="_blank"
-      >
-        {{ item.title }}
+      <div class="d-flex align-center">
+        <a
+          class="d-flex align-center"
+          :href="item.src"
+          target="_blank"
+        >
+          {{ item.title }}
+          <vue-feather
+            title="Open in New Tab"
+            size="1em"
+            :stroke="item.iconColor"
+            type="external-link"
+            style="marginLeft:0.2em;"
+          />
+        </a>
         <vue-feather
-          title="Open in New Tab"
-          size="1em"
-          :stroke="item.iconColor"
-          type="external-link"
-          style="marginLeft:0.2em;"
-        />
-      </a>
-      <vue-feather
-        title="Toggle Favorite"
-        class="itemIcon"
-        :size="item.iconSize"
-        :stroke="item.favoriteStroke"
-        :fill="item.favoriteFill"
-        type="star"
-        @click="toggleFavorite(item.id)"
-      />
-      <span class="end d-flex align-center">
-        <vue-feather
-          title="Show Details"
+          title="Toggle Favorite"
           class="itemIcon"
           :size="item.iconSize"
-          :stroke="item.iconColor"
-          type="more-horizontal"
-          @click="showBookmarkDetail(item.id)"
+          :stroke="item.favoriteStroke"
+          :fill="item.favoriteFill"
+          type="star"
+          @click="toggleFavorite(item.id)"
         />
-      </span>
-    </li>
+        <span class="end d-flex align-center">
+          <vue-feather
+            title="Show Details"
+            class="itemIcon"
+            :size="item.iconSize"
+            :stroke="item.iconColor"
+            type="more-horizontal"
+            @click="showBookmarkDetail(item.id)"
+          />
+        </span>
+      </div>
+    </v-lazy>
     <v-btn
       id="btn-toTop"
       title="Scroll to Top"
@@ -125,6 +128,7 @@ a, a:visited {
     padding-left: 0.5em;
 }
 .item {
+    display: block;
     max-width: 30em;
     border-color: var(--common-font-secondary);
     border-width: 2px;
@@ -140,16 +144,19 @@ a, a:visited {
   }
 }
 
+.containerList {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-start;
+  align-items: flex-start;
+  align-content: flex-start;
+}
 .container {
     height: 100%;
     width: 100%;
     overflow-y: scroll;
     overflow-x: hidden;
     padding: 1em;
-    flex-wrap: wrap;
-    justify-content: flex-start;
-    align-items: flex-start;
-    align-content: flex-start;
 }
 
 @media only screen and (min-width: 1264px) {
