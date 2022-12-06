@@ -1,5 +1,6 @@
 import { useMainStore } from "@/stores/main";
 import { applyPers, extractPers } from "@/js/Personalization";
+import { undefinedReplacer } from "@/js/utils";
 
 let _fileHandler;
 
@@ -49,9 +50,7 @@ function _handleFileSelect (event) {
 
 export async function exportData () {
   const data = await extractPers();
-  const text = JSON.stringify(data, (key, value) => {
-    return typeof value === "undefined" ? null : value;
-  });
+  const text = JSON.stringify(data, undefinedReplacer);
   download(text, "TeamBookmarks.json", "text/plain");
 }
 

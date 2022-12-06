@@ -1,5 +1,6 @@
 import { defineStore } from "pinia";
 import { clone } from "@/js/utils";
+import { savePers } from "@/js/Personalization";
 
 export const useMainStore = defineStore("main", {
   state: () => {
@@ -71,9 +72,15 @@ export const useMainStore = defineStore("main", {
       };
     },
     importData (data) {
-      // todo validate, migrate, import
+      // todo validate
       this.items = clone(data.items);
       this.groups = clone(data.groups);
+
+      // persist changes
+      this.saveData();
+    },
+    async saveData () {
+      await savePers();
     },
     getItem (itemId) {
       return this.items[itemId];
@@ -93,10 +100,12 @@ export const useMainStore = defineStore("main", {
         // todo fix id generation
         newItem.id = Date.now();
       }
-      // todo ensure that all properties are set
-      // todo add check whether this item already existed (id clashes)
+      // todo validate new items
+      // todo prevent id clashes
       this.items[newItem.id] = newItem;
-      // todo persistence
+
+      // persist changes
+      this.saveData();
     },
     deleteItem (itemId) {
       const item = this.items[itemId];
@@ -105,7 +114,9 @@ export const useMainStore = defineStore("main", {
       } else {
         console.error(`Could not find item: ${itemId}`);
       }
-      // todo persistence
+
+      // persist changes
+      this.saveData();
     },
     updateItem (itemId, props) {
       const item = this.items[itemId];
@@ -117,7 +128,9 @@ export const useMainStore = defineStore("main", {
       } else {
         console.error(`Could not find item: ${itemId}`);
       }
-      // todo persistence
+
+      // persist changes
+      this.saveData();
     },
   },
 });

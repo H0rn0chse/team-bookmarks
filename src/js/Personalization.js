@@ -1,6 +1,8 @@
 import { diff } from "deep-object-diff";
 import { useMainStore } from "@/stores/main";
-import { clone } from "./utils.js";
+import { clone, undefinedReplacer } from "@/js/utils";
+
+const localStorageKey = "personalization_team-bookmarks";
 
 async function getDataFromRepo () {
   // todo implement caching
@@ -24,7 +26,7 @@ async function getDataFromRepo () {
           group: groupId,
           title: `Item No. ${index.toString().padStart(3, "0")}`,
           src: "https://sap.com",
-          description: "descr",
+          description: "description",
           keywords: []
         };
       })
@@ -32,34 +34,26 @@ async function getDataFromRepo () {
         items[item.id] = item;
         return items;
       }, {}),
-    groups: {},
+    groups: {
+      "123-456": {
+        "id": "123-456",
+        "title": "my Special pink Group",
+        "color": "red",
+        "background": "rgb(239, 207, 227)"
+      }
+    },
   };
 }
 
 async function getPersFromLocalStorage () {
-  // return JSON.parse(localStorage.getItem("personalization_team"));
-  return {
-    version: "0.0.1",
-    diff: {
-      "items": {
-        "24": {
-          "title": "Item No. 024xxx",
-          "keywords": {
-            "0": "new",
-            "1": "item"
-          }
-        }
-      },
-      "groups": {
-        "123-456": {
-          "id": "123-456",
-          "title": "my Special pink Group",
-          "color": "red",
-          "background": "rgb(239, 207, 227)"
-        }
-      }
-    }
-  };
+  const pers = JSON.parse(localStorage.getItem(localStorageKey));
+  if (!pers) {
+    return {
+      version: "0.0.1",
+      diff: {}
+    };
+  }
+  return pers;
 }
 
 export async function getData () {
@@ -93,7 +87,7 @@ export async function applyPers (pers) {
 
 export async function savePers () {
   const pers = await extractPers();
-  localStorage.setItem("personalization_team-bookmarks", JSON.stringify(pers));
+  localStorage.setItem(localStorageKey, JSON.stringify(pers, undefinedReplacer));
 }
 
 function mixinPers (originalData, pers) {
@@ -111,13 +105,13 @@ function mixinPers (originalData, pers) {
 
     // item and group props
     Object.keys(persEntity).forEach(itemId => {
-      // Add non-extisting items
+      // Add non-existing items
       if (!entityData[itemId]) {
         entityData[itemId] = persEntity[itemId];
         return;
       }
 
-      // Update exisiting items
+      // Update existing items
       entityData[itemId] = mergeProps(entityData[itemId], persEntity[itemId]);
     });
   });

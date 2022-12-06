@@ -6,3 +6,7 @@ export function getColor (sKey) {
 export function clone (obj) {
   return JSON.parse(JSON.stringify(obj));
 }
+
+export function undefinedReplacer (key, value) {
+  return typeof value === "undefined" ? null : value;
+}
