@@ -1,4 +1,5 @@
 import { defineStore } from "pinia";
+import { v4 as uuidV4 } from "uuid";
 import { clone } from "@/js/utils";
 import { savePers } from "@/js/Personalization";
 
@@ -96,12 +97,14 @@ export const useMainStore = defineStore("main", {
       };
     },
     addItem (newItem) {
-      if (!newItem.id) {
-        // todo fix id generation
-        newItem.id = Date.now();
-      }
+      let newId;
+      do {
+        newId = uuidV4();
+      } while (this.items[newId]);
+
+      newItem.id = newId;
+
       // todo validate new items
-      // todo prevent id clashes
       this.items[newItem.id] = newItem;
 
       // persist changes
