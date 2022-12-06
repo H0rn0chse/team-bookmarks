@@ -3,46 +3,20 @@ import { useMainStore } from "@/stores/main";
 import { clone, undefinedReplacer } from "@/js/utils";
 
 const localStorageKey = "personalization_team-bookmarks";
+const bookmarkRepoPath = "./team-bookmarks.json";
 
 async function getDataFromRepo () {
-  // todo implement caching
-  // todo implement
-  return {
-    items: new Array(800)
-      .fill({})
-      .map((item, index) => {
-        var isFavorite = false;
-        var groupId = null;
-        if (index.toString().includes("2")) {
-          isFavorite = true;
-        }
-        if (index.toString().includes("4")) {
-          groupId = "123-456";
-        }
-        return {
-          id: index.toString(),
-          hidden: false,
-          favorite: isFavorite,
-          group: groupId,
-          title: `Item No. ${index.toString().padStart(3, "0")}`,
-          src: "https://sap.com",
-          description: "description",
-          keywords: []
-        };
-      })
-      .reduce((items, item) => {
-        items[item.id] = item;
-        return items;
-      }, {}),
-    groups: {
-      "123-456": {
-        "id": "123-456",
-        "title": "my Special pink Group",
-        "color": "red",
-        "background": "rgb(239, 207, 227)"
-      }
-    },
-  };
+  try {
+    const res = await fetch(bookmarkRepoPath);
+    const data = await res.json();
+    return data;
+  } catch (err) {
+    console.error(err);
+    return {
+      items: {},
+      groups: {}
+    };
+  }
 }
 
 async function getPersFromLocalStorage () {
@@ -107,6 +81,7 @@ function mixinPers (originalData, pers) {
     Object.keys(persEntity).forEach(itemId => {
       // Add non-existing items
       if (!entityData[itemId]) {
+        // todo validate: it might be the case the the base set of bookmarks is unreachable
         entityData[itemId] = persEntity[itemId];
         return;
       }

@@ -8,7 +8,7 @@ const mainStore = useMainStore();
 const searchStore = useSearchStore();
 const dialogStore = useDialogStore();
 
-const peraparedItems = computed(() => {
+const preparedItems = computed(() => {
   return mainStore.allItems.map(item => {
     const iconColor = item.groupColor || "var(--common-font-primary)";
     return {
@@ -47,7 +47,7 @@ function scrollTop () {
     class="container containerList"
   >
     <v-lazy
-      v-for="item in peraparedItems"
+      v-for="item in preparedItems"
       :key="item.id"
       tag="li"
       class="item"
