@@ -46,7 +46,7 @@ export const useDialogStore = defineStore("dialog", () => {
   });
 
   function saveEditItem () {
-    const item = clone(itemDetails);
+    const item = clone(itemDetails.value);
 
     mainStore.updateItem(editBookmark.value.itemId, item);
   }

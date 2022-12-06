@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@mdi/font": "7.0.96",
+    "deep-object-diff": "^1.1.9",
     "feather-icons": "^4.29.0",
     "pinia": "^2.0.27",
     "roboto-fontface": "^0.10.0",

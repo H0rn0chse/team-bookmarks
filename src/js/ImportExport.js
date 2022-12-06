@@ -30,13 +30,13 @@ function _handleFileSelect (event) {
     const fileName = file.name;
     console.log(`Reading ${fileName}`);
     const reader = new FileReader();
-    reader.onload = function () {
+    reader.onload = async function () {
       try {
         const importedData = JSON.parse(reader.result);
+        const personalizedData = await applyPers(importedData);
 
         const mainStore = useMainStore();
-        // todo validate, migrate, import
-        mainStore.importData(applyPers(importedData));
+        mainStore.importData(personalizedData);
       }
       catch (error){
         console.log(error);
@@ -47,9 +47,11 @@ function _handleFileSelect (event) {
   }
 }
 
-export function exportData () {
-  const data = extractPers();
-  const text = JSON.stringify(data);
+export async function exportData () {
+  const data = await extractPers();
+  const text = JSON.stringify(data, (key, value) => {
+    return typeof value === "undefined" ? null : value;
+  });
   download(text, "TeamBookmarks.json", "text/plain");
 }
 

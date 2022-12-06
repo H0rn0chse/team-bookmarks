@@ -1,47 +1,16 @@
 import { defineStore } from "pinia";
+import { clone } from "@/js/utils";
 
 export const useMainStore = defineStore("main", {
   state: () => {
     return {
-      items: new Array(800)
-        .fill({})
-        .map((item, index) => {
-          var isFavorite = false;
-          var groupId = null;
-          if (index.toString().includes("2")) {
-            isFavorite = true;
-          }
-          if (index.toString().includes("4")) {
-            groupId = "123-456";
-          }
-          return {
-            id: index,
-            hidden: false,
-            favorite: isFavorite,
-            group: groupId,
-            title: `Item No. ${index.toString().padStart(3, "0")}`,
-            src: "https://sap.com",
-            description: "descr",
-            keywords: [
-              "test",
-              "foo",
-              "bar"
-            ]
-          };
-        }),
-      groups: {
-        "123-456" : {
-          id: "123-456",
-          title: "my Special pink Group",
-          color: "red",
-          background: "rgb(239, 207, 227)",
-        }
-      }
+      items: {},
+      groups: {}
     };
   },
   getters: {
     allItems (state) {
-      return state.items
+      return Object.values(state.items)
         // remove all hidden items
         .filter(item => !item.hidden)
         // sort by favorite > title
@@ -65,7 +34,7 @@ export const useMainStore = defineStore("main", {
         });
     },
     searchStrings (state) {
-      return state.items
+      return Object.values(state.items)
         // remove all hidden items
         .filter(item => !item.hidden)
         .map(item => {
@@ -83,7 +52,7 @@ export const useMainStore = defineStore("main", {
         });
     },
     availableKeywords (state) {
-      const keywords = state.items
+      const keywords = Object.values(state.items)
         // remove all hidden items
         .filter(item => !item.hidden)
         .map(item => item.keywords)
@@ -95,8 +64,19 @@ export const useMainStore = defineStore("main", {
     }
   },
   actions: {
+    getExportData () {
+      return {
+        items: this.items,
+        groups: this.groups,
+      };
+    },
+    importData (data) {
+      // todo validate, migrate, import
+      this.items = clone(data.items);
+      this.groups = clone(data.groups);
+    },
     getItem (itemId) {
-      return this.items.find(item => item.id === itemId);
+      return this.items[itemId];
     },
     expandItem (itemId) {
       const item = this.getItem(itemId);
@@ -114,20 +94,21 @@ export const useMainStore = defineStore("main", {
         newItem.id = Date.now();
       }
       // todo ensure that all properties are set
-      this.items.push(newItem);
+      // todo add check whether this item already existed (id clashes)
+      this.items[newItem.id] = newItem;
       // todo persistence
     },
     deleteItem (itemId) {
-      const itemIndex = this.items.findIndex(item => item.id === itemId);
-      if (itemIndex > -1) {
-        this.items.splice(itemIndex, 1);
+      const item = this.items[itemId];
+      if (item) {
+        delete this.items[itemId];
       } else {
         console.error(`Could not find item: ${itemId}`);
       }
       // todo persistence
     },
     updateItem (itemId, props) {
-      const item = this.items.find(item => item.id === itemId);
+      const item = this.items[itemId];
       if (item) {
         Object.keys(props).forEach((key) => {
           const value = props[key];
@@ -137,10 +118,6 @@ export const useMainStore = defineStore("main", {
         console.error(`Could not find item: ${itemId}`);
       }
       // todo persistence
-    },
-    importData (data) {
-      console.log(data);
-      alert("validate, migrate, import");
     },
   },
 });
