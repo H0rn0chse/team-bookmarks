@@ -22,6 +22,7 @@ export const useSearchStore = defineStore("search", () => {
 
   const searchKeywords = computed(() => {
     return mainStore.availableKeywords
+      // workaround until https://github.com/vuetifyjs/vuetify/issues/16226 is fixed
       .filter(keyword => !searchTerms.value.includes(keyword));
   });
 
@@ -29,31 +30,30 @@ export const useSearchStore = defineStore("search", () => {
     return mainStore.searchStrings
       .filter(item => {
         // groups
-        const itemData = mainStore.getItem(item.itemId);
         switch (searchGroup.value) {
           case "hidden":
-            if (!itemData.hidden) {
+            if (!item.hidden) {
               return false;
             }
             break;
           case "favorites":
-            if (!itemData.favorite || itemData.hidden) {
+            if (!item.favorite || item.hidden) {
               return false;
             }
             break;
           default:
             // visible
-            if (itemData.hidden) {
+            if (item.hidden) {
               return false;
             }
         }
 
         // keywords
         return searchTerms.value.every(term => {
-          return item.keywords.some(keyword => keyword.includes(term));
+          return item.searchStrings.some(string => string.includes(term));
         });
       })
-      .map(item => item.itemId);
+      .map(item => item.id);
   });
 
   return {

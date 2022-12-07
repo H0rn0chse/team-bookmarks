@@ -33,6 +33,11 @@ export const useMainStore = defineStore("main", {
           };
         });
     },
+    /**
+     * Calculates a list of searchable strings based on ALL items
+     * @param {object} state
+     * @returns {object[]} A list of objects containing all
+     */
     searchStrings (state) {
       return Object.values(state.items)
         .map(item => {
@@ -44,11 +49,18 @@ export const useMainStore = defineStore("main", {
           group?.title && keywords.add((group?.title || "").toLowerCase());
 
           return {
-            itemId: item.id,
-            keywords: Array.from(keywords),
+            id: item.id,
+            hidden: item.hidden,
+            favorite: item.favorite,
+            searchStrings: Array.from(keywords),
           };
         });
     },
+    /**
+     * Calculates a list of keywords based on visible items
+     * @param {object} state
+     * @returns {string[]} A list of keywords
+     */
     availableKeywords (state) {
       const keywords = Object.values(state.items)
         // remove all hidden items
