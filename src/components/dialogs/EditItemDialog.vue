@@ -44,12 +44,14 @@ function updateBookmark () {
         </v-btn>
 
         <v-btn
+          v-if="dialogStore.editIsOriginal"
           color="error"
           @click="hideBookmark"
         >
           Hide
         </v-btn>
         <v-btn
+          v-if="!dialogStore.editIsOriginal"
           color="error"
           @click="deleteBookmark"
         >

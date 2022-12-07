@@ -1,7 +1,8 @@
-import { ref } from "vue";
+import { ref, computed } from "vue";
 import { defineStore } from "pinia";
 import { useMainStore } from "@/stores/main";
 import { clone } from "@/js/utils";
+import { isOriginalItem } from "@/js/Personalization";
 
 export const useDialogStore = defineStore("dialog", () => {
   const mainStore = useMainStore();
@@ -35,6 +36,11 @@ export const useDialogStore = defineStore("dialog", () => {
   function hideSettings () {
     settings.value.show = false;
   }
+  const settingsExpose = {
+    settings,
+    showSettings,
+    hideSettings,
+  };
 
   // ================= Details =================
   const itemDetails = ref(clone(emptyItem));
@@ -43,6 +49,11 @@ export const useDialogStore = defineStore("dialog", () => {
   const editBookmark = ref({
     show: false,
     itemId: null
+  });
+  const editIsOriginal = computed({
+    get () {
+      return isOriginalItem(editBookmark.value.itemId);
+    }
   });
 
   function saveEditItem () {
@@ -70,6 +81,16 @@ export const useDialogStore = defineStore("dialog", () => {
     editBookmark.value.show = false;
   }
 
+  const editBookmarkExpose = {
+    editBookmark,
+    editIsOriginal,
+    saveEditItem,
+    deleteEditItem,
+    hideEditItem,
+    showEdit,
+    hideEdit,
+  };
+
   // ================= Add =================
   const addBookmark = ref({
     show: false,
@@ -94,20 +115,17 @@ export const useDialogStore = defineStore("dialog", () => {
     addBookmark.value.show = false;
   }
 
-  return {
-    settings,
-    showSettings,
-    hideSettings,
-    itemDetails,
-    editBookmark,
-    saveEditItem,
-    deleteEditItem,
-    hideEditItem,
-    showEdit,
-    hideEdit,
+  const addBookmarkExpose = {
     addBookmark,
     saveAddItem,
     showAdd,
     hideAdd,
+  };
+
+  return {
+    itemDetails,
+    ...settingsExpose,
+    ...editBookmarkExpose,
+    ...addBookmarkExpose
   };
 });

@@ -5,10 +5,20 @@ import { clone, undefinedReplacer } from "@/js/utils";
 const localStorageKey = "personalization_team-bookmarks";
 const bookmarkRepoPath = "./team-bookmarks.json";
 
-async function getDataFromRepo () {
+let cachedPromise = null;
+function getDataFromRepo () {
+  if (!cachedPromise) {
+    cachedPromise = _getDataFromRepo();
+  }
+  return cachedPromise;
+}
+
+let cachedResult = null;
+async function _getDataFromRepo () {
   try {
     const res = await fetch(bookmarkRepoPath);
     const data = await res.json();
+    cachedResult = data;
     return data;
   } catch (err) {
     console.error(err);
@@ -17,6 +27,13 @@ async function getDataFromRepo () {
       groups: {}
     };
   }
+}
+
+export function isOriginalItem (itemId) {
+  if (!cachedResult || !itemId) {
+    return false;
+  }
+  return !!cachedResult?.items?.[itemId];
 }
 
 async function getPersFromLocalStorage () {
