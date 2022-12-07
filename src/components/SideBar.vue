@@ -80,23 +80,23 @@ function showAddItemDialog () {
 
 <style scoped>
 .sideBar {
-    justify-content: space-between;
-    width: 100%;
-    height: 100%;
+  justify-content: space-between;
+  width: 100%;
+  height: 100%;
 }
 
 .sideBar > .top {
-    margin-top: 2em;
+  margin-top: 2em;
 }
 
 .sideBar > .bottom {
-    margin-bottom: 1em;
+  margin-bottom: 1em;
 }
 
 .sideBar .sideItem {
-    margin-top: 1em;
-    margin-bottom: 1em;
-    cursor: pointer;
+  margin-top: 1em;
+  margin-bottom: 1em;
+  cursor: pointer;
 }
 
 </style>

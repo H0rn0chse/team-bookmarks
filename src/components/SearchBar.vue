@@ -22,6 +22,7 @@ const combobox = readonly({
     <div class="searchBarWrapper d-flex">
       <v-combobox
         v-model="searchStore.searchTerms"
+        class="searchCombobox"
         :items="searchStore.searchKeywords"
         bg-color="background-light"
         :delimiters="combobox.delimiters"
@@ -35,6 +36,7 @@ const combobox = readonly({
       />
       <v-select
         v-model="searchStore.searchGroup"
+        class="groupSelect"
         bg-color="background-light"
         :items="searchStore.searchGroups"
         label="Search group"
@@ -45,13 +47,14 @@ const combobox = readonly({
 
 <style scoped>
 .searchBarComponent {
-    width: 100%;
-    height: 100%;
+  width: 100%;
+  height: 100%;
 }
 
 .searchBarWrapper {
-    width: 70%;
-    margin-top: 3em;
+  width: 70%;
+  margin-top: 3em;
+  flex-wrap: wrap;
 }
 
 .searchBarWrapper > * {
@@ -59,8 +62,13 @@ const combobox = readonly({
   margin-right: 0.5em;
 }
 
-.searchBarWrapper > .v-select {
+.searchCombobox {
+  min-width: 10em;
+}
+
+.groupSelect {
   max-width: 12em;
+  min-width: 10em;
 }
 
 </style>

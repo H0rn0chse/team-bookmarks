@@ -31,7 +31,7 @@ function updateBookmark () {
 <template>
   <v-dialog
     v-model="dialogStore.editBookmark.show"
-    min-width="400"
+    min-width="350"
     max-width="800"
     transition="dialog-top-transition"
   >

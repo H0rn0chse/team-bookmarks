@@ -29,18 +29,18 @@ import AddItemDialog from "@/components/dialogs/AddItemDialog.vue";
 <style scoped>
 
 #app, #gridContainer {
-    width: 100vw;
-    height: 100vh;
-    margin: 0;
-    padding: 0;
+  width: 100vw;
+  height: 100vh;
+  margin: 0;
+  padding: 0;
 }
 
 #gridContainer {
-    display: grid;
-    grid-template-columns: 5em auto;
-    grid-template-rows: 10em auto;
-    grid-template-areas:
-    "sideBar searchBar"
-    "sideBar main";
+  display: grid;
+  grid-template-columns: 5em auto;
+  grid-template-rows: min-content auto;
+  grid-template-areas:
+  "sideBar searchBar"
+  "sideBar main";
 }
 </style>

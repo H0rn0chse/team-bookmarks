@@ -9,7 +9,7 @@ const dialogStore = useDialogStore();
 <template>
   <v-dialog
     v-model="dialogStore.settings.show"
-    min-width="400"
+    min-width="350"
     max-width="1200"
     transition="dialog-top-transition"
   >

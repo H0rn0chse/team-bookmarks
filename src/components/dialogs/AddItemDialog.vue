@@ -13,7 +13,7 @@ function addBookmark () {
 <template>
   <v-dialog
     v-model="dialogStore.addBookmark.show"
-    min-width="400"
+    min-width="350"
     max-width="800"
     transition="dialog-top-transition"
   >
