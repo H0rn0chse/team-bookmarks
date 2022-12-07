@@ -11,13 +11,13 @@ export const useSearchStore = defineStore("search", () => {
 
   const searchGroups = ref([{
     value: "visible",
-    title: "Visible",
+    title: "Visible Items",
   }, {
     value: "favorites",
     title: "Only Favorites",
   }, {
     value: "hidden",
-    title: "Hidden",
+    title: "Hidden Items",
   }]);
 
   const searchKeywords = computed(() => {

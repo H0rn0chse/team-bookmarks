@@ -39,7 +39,6 @@ const combobox = readonly({
         class="groupSelect"
         bg-color="background-light"
         :items="searchStore.searchGroups"
-        label="Search group"
       />
     </div>
   </div>
