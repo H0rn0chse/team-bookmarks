@@ -6,19 +6,24 @@ const dialogStore = useDialogStore();
 
 function deleteBookmark () {
   // todo user confirmation
-  dialogStore.deleteEditItem();
   dialogStore.hideEdit();
+  dialogStore.deleteEditItem();
 }
 
 function hideBookmark () {
   // todo check user confirmation
-  dialogStore.hideEditItem();
   dialogStore.hideEdit();
+  dialogStore.hideEditItem();
+}
+
+function unhideBookmark () {
+  dialogStore.hideEdit();
+  dialogStore.unhideEditItem();
 }
 
 function updateBookmark () {
-  dialogStore.saveEditItem();
   dialogStore.hideEdit();
+  dialogStore.saveEditItem();
 }
 
 </script>
@@ -44,7 +49,14 @@ function updateBookmark () {
         </v-btn>
 
         <v-btn
-          v-if="dialogStore.editIsOriginal"
+          v-if="dialogStore.itemDetails.hidden"
+          color="primary"
+          @click="unhideBookmark"
+        >
+          Unhide
+        </v-btn>
+        <v-btn
+          v-if="(dialogStore.editIsOriginal && !dialogStore.itemDetails.hidden)"
           color="error"
           @click="hideBookmark"
         >

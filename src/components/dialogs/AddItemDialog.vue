@@ -5,8 +5,8 @@ import { useDialogStore } from "@/stores/dialog";
 const dialogStore = useDialogStore();
 
 function addBookmark () {
-  dialogStore.saveAddItem();
   dialogStore.hideAdd();
+  dialogStore.saveAddItem();
 }
 </script>
 

@@ -67,6 +67,9 @@ export const useDialogStore = defineStore("dialog", () => {
   function hideEditItem () {
     mainStore.updateItem(editBookmark.value.itemId, { hidden: true });
   }
+  function unhideEditItem () {
+    mainStore.updateItem(editBookmark.value.itemId, { hidden: false });
+  }
   function showEdit (itemId) {
     const item = mainStore.getItem(itemId) || emptyItem;
     itemDetails.value = clone(item);
@@ -87,6 +90,7 @@ export const useDialogStore = defineStore("dialog", () => {
     saveEditItem,
     deleteEditItem,
     hideEditItem,
+    unhideEditItem,
     showEdit,
     hideEdit,
   };

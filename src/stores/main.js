@@ -13,8 +13,6 @@ export const useMainStore = defineStore("main", {
   getters: {
     allItems (state) {
       return Object.values(state.items)
-        // remove all hidden items
-        .filter(item => !item.hidden)
         // sort by favorite > title
         .sort((itemA, itemB) => {
           if (itemA.favorite && !itemB.favorite) {
@@ -37,8 +35,6 @@ export const useMainStore = defineStore("main", {
     },
     searchStrings (state) {
       return Object.values(state.items)
-        // remove all hidden items
-        .filter(item => !item.hidden)
         .map(item => {
           const keywords = new Set(item.keywords);
           const group = state.groups[item.group];

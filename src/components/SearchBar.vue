@@ -19,7 +19,7 @@ const combobox = readonly({
 
 <template>
   <div class="searchBarComponent d-flex align-start justify-center">
-    <div class="searchBarWrapper">
+    <div class="searchBarWrapper d-flex">
       <v-combobox
         v-model="searchStore.searchTerms"
         :items="searchStore.searchKeywords"
@@ -32,6 +32,12 @@ const combobox = readonly({
         multiple
         chips
         clearable
+      />
+      <v-select
+        v-model="searchStore.searchGroup"
+        bg-color="background-light"
+        :items="searchStore.searchGroups"
+        label="Search group"
       />
     </div>
   </div>
@@ -47,4 +53,14 @@ const combobox = readonly({
     width: 70%;
     margin-top: 3em;
 }
+
+.searchBarWrapper > * {
+  margin-left: 0.5em;
+  margin-right: 0.5em;
+}
+
+.searchBarWrapper > .v-select {
+  max-width: 12em;
+}
+
 </style>

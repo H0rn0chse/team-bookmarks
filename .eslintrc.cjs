@@ -16,29 +16,18 @@ module.exports = {
     "vue"
   ],
   "rules": {
-    "indent": [
-      "error",
-      2
-    ],
+    "indent": ["error", 2, {
+      "SwitchCase": 1
+    }],
     "linebreak-style": "off",
-    "quotes": [
-      "error",
-      "double"
-    ],
-    "semi": [
-      "error",
-      "always"
-    ],
+    "quotes": ["error", "double"],
+    "semi": ["error", "always"],
     "no-unused-vars": "warn",
     "no-warning-comments": "warn",
-    "eol-last": [
-      "error",
-      "always"
-    ],
-    "space-before-function-paren": [
-      "error",
-      "always"
-    ],
+    "eol-last": ["error", "always"],
+    "space-before-function-paren": ["error", "always"],
+    "object-curly-spacing": ["error", "always"],
+    "array-bracket-spacing": ["error", "never"],
     "vue/html-indent": ["warn", 2, {
       "attribute": 1,
       "baseIndent": 1,
