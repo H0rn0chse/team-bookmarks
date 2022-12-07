@@ -78,9 +78,6 @@ export const useDialogStore = defineStore("dialog", () => {
     editBookmark.value.show = true;
   }
   function hideEdit () {
-    itemDetails.value = clone(emptyItem);
-
-    editBookmark.value.itemId = null;
     editBookmark.value.show = false;
   }
 
@@ -113,9 +110,6 @@ export const useDialogStore = defineStore("dialog", () => {
     addBookmark.value.show = true;
   }
   function hideAdd () {
-    itemDetails.value = clone(emptyItem);
-
-    addBookmark.value.itemId = null;
     addBookmark.value.show = false;
   }
 
