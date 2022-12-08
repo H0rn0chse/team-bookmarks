@@ -81,7 +81,7 @@ function isValidItemProp (prop, value) {
     case "src":
       return !!value && !!value.trim();
     case "keywords":
-      return Array.isArray(value);
+      return Array.isArray(value) || typeof value === "object";
     default:
       return true;
   }
