@@ -8,7 +8,10 @@
 Have look at the demo [here](https://h0rn0chse.github.io/team-bookmarks/). <br>This app enables the team to have a common set of bookmarks. This helps especially for onboardings and knowledge sharing. On top of the team-bookmark each user can personalize and add new bookmarks. Everything is stored in the `LocalStorage` and can easily be exported and imported.
 
 ## How to Use
-Just fork this repository and adjust the [Team-Bookmarks](./public/team-bookmarks.json). You can then `build` and publish the `./docs/` folder (e.g. via GithubPages).
+Just fork this repository and adjust the [Team-Bookmarks](./public/team-bookmarks.json). You can then `build` and publish the `./docs/` folder (e.g. via GithubPages). You might install the `pre-commit hook`  via `npm run copy-pre-commit` to prevent missing builds.
+
+__*Hint*__<br>
+Although you only might change a static asset (e.g. `./public/team-bookmarks.json`) the `build` is required!
 
 ### Fork the Repository outside of Github
 If your team works on a different git platform than Github you cannot fork the repo easily. But here is a description on how to make a fork available and how to update. [Fork outside of Github](./assets/Fork%20outside%20of%20Github.md)

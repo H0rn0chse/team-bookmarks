@@ -36,7 +36,6 @@ async function updateBookmark () {
 </script>
 
 <template>
-  <!-- Test commit -->
   <v-dialog
     v-model="dialogStore.editBookmark.show"
     min-width="350"
