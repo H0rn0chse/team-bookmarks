@@ -67,10 +67,10 @@ function isValidGroup (group) {
     return false;
   }
 
-  const hasId = !!group.id && !!group.id.trim();
-  const hasTitle = !!group.title && !!group.title.trim();
-  const hasColor = !!group.color && !!group.color.trim();
-  const hasBackground = !!group.background && !!group.background.trim();
+  const hasId = isValidGroupProp("id", group.id);
+  const hasTitle = isValidGroupProp("title", group.title);
+  const hasColor = isValidGroupProp("color", group.color);
+  const hasBackground = isValidGroupProp("background", group.background);
   return hasId && hasTitle && hasColor && hasBackground;
 }
 
@@ -83,7 +83,7 @@ function isValidItemProp (prop, value) {
     case "keywords":
       return Array.isArray(value);
     default:
-      true;
+      return true;
   }
 }
 
@@ -95,6 +95,6 @@ function isValidGroupProp (prop, value) {
     case "background":
       return !!value && !!value.trim();
     default:
-      true;
+      return true;
   }
 }
