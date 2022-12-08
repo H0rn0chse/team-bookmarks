@@ -1,7 +1,9 @@
 <script setup>
-import { readonly } from "vue";
+import { readonly, inject } from "vue";
 import { useDialogStore } from "@/stores/dialog";
 import { importData, exportData } from "@/js/ImportExport";
+
+const confirm = inject("confirm");
 
 const dialogStore = useDialogStore();
 
@@ -11,9 +13,12 @@ const icons = readonly({
 });
 
 async function importDataLocal () {
-  console.log ("starting import");
-  await importData();
-  console.log ("import done");
+  const userConfirmed = await confirm("Are you sure? This Action will permanently override your existing Bookmarks!");
+  if (userConfirmed) {
+    console.log ("starting import");
+    await importData();
+    console.log ("import done");
+  }
 }
 
 async function exportDataLocal () {
