@@ -9,7 +9,6 @@ Have look at the demo [here](https://h0rn0chse.github.io/team-bookmarks/). <br>T
 
 <img src="./assets/filter.png" title="Filtered Links" height=450px/>
 <br />
-<br />
 <img src="./assets/edit.png" title="Edit Dialog" height=450px/>
 
 ## How to Use
