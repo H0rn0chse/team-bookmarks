@@ -1,4 +1,5 @@
 <script setup>
+import { ref } from "vue";
 import ItemDetails from "@/components/ItemDetails.vue";
 import { useDialogStore } from "@/stores/dialog";
 
@@ -21,11 +22,15 @@ function unhideBookmark () {
   dialogStore.unhideEditItem();
 }
 
-function updateBookmark () {
-  dialogStore.hideEdit();
-  dialogStore.saveEditItem();
-}
+const itemDetails = ref(null);
+async function updateBookmark () {
+  const valid = await itemDetails.value.validate();
 
+  if (valid) {
+    dialogStore.hideEdit();
+    dialogStore.saveEditItem();
+  }
+}
 </script>
 
 <template>
@@ -38,7 +43,7 @@ function updateBookmark () {
     <v-card>
       <v-card-title>Edit Bookmark</v-card-title>
       <v-card-text>
-        <ItemDetails />
+        <ItemDetails ref="itemDetails" />
       </v-card-text>
       <v-card-actions class="d-flex justify-end">
         <v-btn

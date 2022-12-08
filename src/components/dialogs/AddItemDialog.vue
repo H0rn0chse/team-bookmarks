@@ -1,12 +1,18 @@
 <script setup>
+import { ref } from "vue";
 import ItemDetails from "@/components/ItemDetails.vue";
 import { useDialogStore } from "@/stores/dialog";
 
 const dialogStore = useDialogStore();
 
-function addBookmark () {
-  dialogStore.hideAdd();
-  dialogStore.saveAddItem();
+const itemDetails = ref(null);
+async function addBookmark () {
+  const valid = await itemDetails.value.validate();
+  if (valid) {
+
+    dialogStore.hideAdd();
+    dialogStore.saveAddItem();
+  }
 }
 </script>
 
@@ -20,7 +26,7 @@ function addBookmark () {
     <v-card>
       <v-card-title>Add Bookmark</v-card-title>
       <v-card-text>
-        <ItemDetails />
+        <ItemDetails ref="itemDetails" />
       </v-card-text>
       <v-card-actions class="d-flex justify-end">
         <v-btn

@@ -1,5 +1,5 @@
 <script setup>
-import { readonly, computed } from "vue";
+import { readonly, computed, reactive, ref, defineExpose } from "vue";
 import { useDialogStore } from "@/stores/dialog";
 import { useMainStore } from "@/stores/main";
 
@@ -25,10 +25,34 @@ const keywordSuggestions = computed({
   }
 });
 
+const form = ref(null);
+const formValidation = reactive({
+  valid: true,
+  titleRules: [
+    value => !!value.trim() || "Title is required"
+  ],
+  linkRules: [
+    value => !!value.trim() || "Link is required"
+  ],
+});
+
+async function validate () {
+  const { valid } = await form.value.validate();
+
+  if (valid) {
+    alert("Form is valid");
+  }
+  return valid;
+}
+defineExpose({ validate });
 </script>
 
 <template>
-  <div>
+  <v-form
+    ref="form"
+    v-model="formValidation.valid"
+    lazy-validation
+  >
     <v-checkbox
       v-model="dialogStore.itemDetails.favorite"
       label="Mark as Favorite"
@@ -36,10 +60,12 @@ const keywordSuggestions = computed({
     />
     <v-text-field
       v-model="dialogStore.itemDetails.title"
+      :rules="formValidation.titleRules"
       label="Title"
     />
     <v-text-field
       v-model="dialogStore.itemDetails.src"
+      :rules="formValidation.linkRules"
       label="Link"
     />
     <v-text-field
@@ -59,7 +85,7 @@ const keywordSuggestions = computed({
       chips
       clearable
     />
-  </div>
+  </v-form>
 </template>
 
 
