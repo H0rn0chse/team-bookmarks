@@ -1,15 +1,31 @@
 <script setup>
-import { reactive } from "vue";
+import { ref, watch } from "vue";
 
-const state = reactive({
-  show: false,
-  message: ""
+const showDialog = ref(false);
+const dialogMessage = ref("");
+const confirm = ref(null);
+
+let resolveShow = () => {};
+function show (message = "") {
+  // reset confirm
+  confirm.value = null;
+
+  dialogMessage.value = message;
+  showDialog.value = true;
+  return new Promise((resolve) => {
+    resolveShow = resolve;
+  });
+}
+
+watch(showDialog, (newValue) => {
+  if (!newValue) {
+    resolveShow(!!confirm.value);
+  }
 });
 
-function show (message) {
-  state.show = true;
-  state.message = message;
-  return Promise.resolve(true);
+function close (result) {
+  confirm.value = result;
+  showDialog.value = false;
 }
 
 defineExpose({
@@ -19,25 +35,27 @@ defineExpose({
 
 <template>
   <v-dialog
-    v-model="state.show"
+    v-model="showDialog"
     min-width="350"
     max-width="400"
     transition="dialog-top-transition"
   >
     <v-card>
       <v-card-text>
-        {{ state.message }}
+        <p :style="{ textAlign: 'center' }">
+          {{ dialogMessage }}
+        </p>
       </v-card-text>
       <v-card-actions class="d-flex justify-end">
         <v-btn
           color="primary"
-          @click="confirm"
+          @click="close(true)"
         >
           Confirm
         </v-btn>
         <v-btn
           color="error"
-          @click="decline"
+          @click="close(false)"
         >
           Decline
         </v-btn>

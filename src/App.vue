@@ -7,10 +7,16 @@ import SettingsDialog from "@/components/dialogs/SettingsDialog.vue";
 import EditItemDialog from "@/components/dialogs/EditItemDialog.vue";
 import AddItemDialog from "@/components/dialogs/AddItemDialog.vue";
 import ConfirmDialog from "@/components/dialogs/ConfirmDialog.vue";
+import ErrorDialog from "@/components/dialogs/ErrorDialog.vue";
 
 const confirm = ref(null);
 provide("confirm", (message) => {
   return confirm.value.show(message);
+});
+
+const error = ref(null);
+provide("showError", (message) => {
+  return error.value.show(message);
 });
 </script>
 
@@ -30,6 +36,7 @@ provide("confirm", (message) => {
       <EditItemDialog />
       <AddItemDialog />
       <ConfirmDialog ref="confirm" />
+      <ErrorDialog ref="error" />
     </v-main>
   </v-app>
 </template>

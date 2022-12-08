@@ -9,7 +9,6 @@ const itemDetails = ref(null);
 async function addBookmark () {
   const valid = await itemDetails.value.validate();
   if (valid) {
-
     dialogStore.hideAdd();
     dialogStore.saveAddItem();
   }

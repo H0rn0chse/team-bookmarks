@@ -1,4 +1,4 @@
-import { ref, computed } from "vue";
+import { ref, computed, inject } from "vue";
 import { defineStore } from "pinia";
 import { useMainStore } from "@/stores/main";
 import { clone } from "@/js/utils";
@@ -6,6 +6,7 @@ import { isOriginalItem } from "@/js/Personalization";
 
 export const useDialogStore = defineStore("dialog", () => {
   const mainStore = useMainStore();
+  const showError = inject("showError");
 
   const emptyItem = {
     hidden: false,
@@ -31,6 +32,8 @@ export const useDialogStore = defineStore("dialog", () => {
   });
 
   function showSettings () {
+    console.error("Late validation failed unexpectedly");
+    showError("Item could not be added");
     settings.value.show = true;
   }
   function hideSettings () {

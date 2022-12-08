@@ -7,8 +7,7 @@ const dialogStore = useDialogStore();
 const confirm = inject("confirm");
 
 async function deleteBookmark () {
-  // todo user confirmation
-  const userConfirmed = await confirm("Are you sure?");
+  const userConfirmed = await confirm("Are you sure? This Action removes the Bookmark permanently");
   if (userConfirmed) {
     dialogStore.hideEdit();
     dialogStore.deleteEditItem();
@@ -16,7 +15,6 @@ async function deleteBookmark () {
 }
 
 function hideBookmark () {
-  // todo check user confirmation
   dialogStore.hideEdit();
   dialogStore.hideEditItem();
 }

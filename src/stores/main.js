@@ -1,3 +1,4 @@
+import { inject } from "vue";
 import { defineStore } from "pinia";
 import { v4 as uuidV4 } from "uuid";
 import { clone } from "@/js/utils";
@@ -5,8 +6,10 @@ import { isValidEntityItem, isValidPersItem } from "@/js/Validation";
 import { savePers } from "@/js/Personalization";
 
 export const useMainStore = defineStore("main", {
-  state: () => {
+  state () {
+    const showError = inject("showError");
     return {
+      showError,
       items: {},
       groups: {}
     };
@@ -114,8 +117,8 @@ export const useMainStore = defineStore("main", {
       newItem.id = newId;
 
       if (!isValidEntityItem("items", newItem)) {
-        // todo add error dialog
-        throw new Error("Late validation failed unexpectedly");
+        console.error("Late validation failed unexpectedly");
+        this.showError("Bookmark could not be added");
       }
 
       this.items[newItem.id] = newItem;
@@ -128,7 +131,8 @@ export const useMainStore = defineStore("main", {
       if (item) {
         delete this.items[itemId];
       } else {
-        throw new Error(`Could not find item: ${itemId}`);
+        console.error(`Could not find item: ${itemId}`);
+        this.showError("Bookmark could not be deleted");
       }
 
       // persist changes
@@ -136,8 +140,8 @@ export const useMainStore = defineStore("main", {
     },
     updateItem (itemId, props) {
       if (!isValidPersItem("items", props)) {
-        // todo add error dialog
-        throw new Error("Late validation failed unexpectedly");
+        console.error("Late validation failed unexpectedly");
+        this.showError("Bookmark could not be updated");
       }
 
       const item = this.items[itemId];
@@ -147,7 +151,8 @@ export const useMainStore = defineStore("main", {
           item[key] = value;
         });
       } else {
-        throw new Error(`Could not find item: ${itemId}`);
+        console.error(`Could not find item: ${itemId}`);
+        this.showError("Bookmark could not be updated");
       }
 
       // persist changes
