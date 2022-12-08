@@ -1,6 +1,7 @@
 import { defineStore } from "pinia";
 import { v4 as uuidV4 } from "uuid";
 import { clone } from "@/js/utils";
+import { isValidEntityItem, isValidPersItem } from "@/js/Validation";
 import { savePers } from "@/js/Personalization";
 
 export const useMainStore = defineStore("main", {
@@ -81,7 +82,7 @@ export const useMainStore = defineStore("main", {
       };
     },
     importData (data) {
-      // todo validate
+      // validation should be already done prior to importing
       this.items = clone(data.items);
       this.groups = clone(data.groups);
 
@@ -112,7 +113,11 @@ export const useMainStore = defineStore("main", {
 
       newItem.id = newId;
 
-      // todo validate new items
+      if (!isValidEntityItem("items", newItem)) {
+        // todo add error dialog
+        throw new Error("Late validation failed unexpectedly");
+      }
+
       this.items[newItem.id] = newItem;
 
       // persist changes
@@ -123,13 +128,18 @@ export const useMainStore = defineStore("main", {
       if (item) {
         delete this.items[itemId];
       } else {
-        console.error(`Could not find item: ${itemId}`);
+        throw new Error(`Could not find item: ${itemId}`);
       }
 
       // persist changes
       this.saveData();
     },
     updateItem (itemId, props) {
+      if (!isValidPersItem("items", props)) {
+        // todo add error dialog
+        throw new Error("Late validation failed unexpectedly");
+      }
+
       const item = this.items[itemId];
       if (item) {
         Object.keys(props).forEach((key) => {
@@ -137,7 +147,7 @@ export const useMainStore = defineStore("main", {
           item[key] = value;
         });
       } else {
-        console.error(`Could not find item: ${itemId}`);
+        throw new Error(`Could not find item: ${itemId}`);
       }
 
       // persist changes

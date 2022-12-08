@@ -1,6 +1,7 @@
 import { diff } from "deep-object-diff";
 import { useMainStore } from "@/stores/main";
-import { clone, isValidEntityItem, undefinedReplacer } from "@/js/utils";
+import { clone, undefinedReplacer } from "@/js/utils";
+import { isValidEntityItem, isValidPersItem } from "@/js/Validation";
 
 const localStorageKey = "team-bookmarks-personalization";
 const trashKey = "team-bookmarks-trash";
@@ -48,6 +49,10 @@ async function getPersFromLocalStorage () {
   return pers;
 }
 
+/**
+ * Fetches and validates the data and applies the personalization
+ * @returns {object}
+ */
 export async function getData () {
   const originalData = await getDataFromRepo();
   const pers = await getPersFromLocalStorage();
@@ -69,6 +74,11 @@ export async function extractPers () {
   };
 }
 
+/**
+ * Applies the personalization to the originalData and validates
+ * @param {object} pers
+ * @returns {object}
+ */
 export async function applyPers (pers) {
   const originalData = await getDataFromRepo();
 
@@ -115,8 +125,14 @@ function mixinPers (originalData, pers) {
         return;
       }
 
-      // Update existing items
-      entityData[itemId] = mergeProps(entityData[itemId], persEntity[itemId]);
+
+      if (isValidPersItem(entityKey, persEntity[itemId])) {
+        // Update existing items
+        entityData[itemId] = mergeProps(entityData[itemId], persEntity[itemId]);
+      } else {
+        addToTrash(entityKey, persEntity[itemId]);
+        console.error(`Validation: Removed invalid personalization for ${entityKey} item ${itemId}`);
+      }
     });
   });
   // remove assignments to non-existing groups
