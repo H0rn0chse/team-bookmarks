@@ -1,8 +1,9 @@
 import { diff } from "deep-object-diff";
 import { useMainStore } from "@/stores/main";
-import { clone, undefinedReplacer } from "@/js/utils";
+import { clone, isValidEntityItem, undefinedReplacer } from "@/js/utils";
 
-const localStorageKey = "personalization_team-bookmarks";
+const localStorageKey = "team-bookmarks-personalization";
+const trashKey = "team-bookmarks-trash";
 const bookmarkRepoPath = "./team-bookmarks.json";
 
 let cachedPromise = null;
@@ -81,6 +82,13 @@ export async function savePers () {
   localStorage.setItem(localStorageKey, JSON.stringify(pers, undefinedReplacer));
 }
 
+/**
+ * Mixes personalization into the original data
+ * HJandles inconsistencies in the personalization
+ * @param {object} originalData
+ * @param {object} pers
+ * @returns {object} The personalized data
+ */
 function mixinPers (originalData, pers) {
   const data = clone(originalData);
 
@@ -98,8 +106,12 @@ function mixinPers (originalData, pers) {
     Object.keys(persEntity).forEach(itemId => {
       // Add non-existing items
       if (!entityData[itemId]) {
-        // todo validate: it might be the case the the base set of bookmarks is unreachable
-        entityData[itemId] = persEntity[itemId];
+        if (isValidEntityItem(entityKey, persEntity[itemId])) {
+          entityData[itemId] = persEntity[itemId];
+        } else {
+          addToTrash(entityKey, persEntity[itemId]);
+          console.error(`Validation: ${entityKey} item ${itemId} is invalid and got removed from personalization`);
+        }
         return;
       }
 
@@ -136,4 +148,13 @@ function mergeProps (originalObj, newObj) {
     data[key] = newValue;
   });
   return data;
+}
+
+function addToTrash (entityKey, item) {
+  const trash = JSON.parse(localStorage.getItem(trashKey)) || {};
+  if (!trash[entityKey]) {
+    trash[entityKey] = [];
+  }
+  trash[entityKey].push(item);
+  localStorage.setItem(trashKey, JSON.stringify(trash, undefinedReplacer));
 }

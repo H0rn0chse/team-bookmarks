@@ -38,10 +38,6 @@ const formValidation = reactive({
 
 async function validate () {
   const { valid } = await form.value.validate();
-
-  if (valid) {
-    alert("Form is valid");
-  }
   return valid;
 }
 defineExpose({ validate });
