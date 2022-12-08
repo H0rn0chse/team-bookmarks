@@ -1,8 +1,19 @@
 # Team-Bookmarks
 
-more description & documentation is in progress
+* [How To Use](#how-to-use)
+  * [Fork the Repository outside of Github](#fork-the-repository-outside-of-github)
+* [Development Setup](#development-setup)
+* [Libraries](#libraries)
 
-## Project setup
+Have look at the demo [here](https://h0rn0chse.github.io/team-bookmarks/). <br>This app enables the team to have a common set of bookmarks. This helps especially for onboardings and knowledge sharing. On top of the team-bookmark each user can personalize and add new bookmarks. Everything is stored in the `LocalStorage` and can easily be exported and imported.
+
+## How to Use
+Just fork this repository and adjust the [Team-Bookmarks](./public/team-bookmarks.json). You can then `build` and publish the `./docs/` folder (e.g. via GithubPages).
+
+### Fork the Repository outside of Github
+If your team works on a different git platform than Github you cannot fork the repo easily. But here is a description on how to make a fork available and how to update. [Fork outside of Github](./assets/Fork%20outside%20of%20Github.md)
+
+## Development Setup
 
 1. Installing dependencies
 ```
