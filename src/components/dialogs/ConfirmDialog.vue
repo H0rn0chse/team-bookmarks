@@ -1,19 +1,15 @@
 <script setup>
 import { reactive } from "vue";
 
-const data = reactive({
-  display: "none"
+const state = reactive({
+  show: false,
+  message: ""
 });
+
 function show (message) {
-  data.display = "";
-  return new Promise((resolve, reject) =>{
-    if (globalThis.confirm(message)) {
-      resolve(true);
-    }
-    resolve(false);
-    //todo
-    data.display = "none";
-  });
+  state.show = true;
+  state.message = message;
+  return Promise.resolve(true);
 }
 
 defineExpose({
@@ -22,12 +18,32 @@ defineExpose({
 </script>
 
 <template>
-  <div
-    ref="container"
-    :style="{ background:'red', display:data.display, position:'absolute', top:0, left:0 }"
+  <v-dialog
+    v-model="state.show"
+    min-width="350"
+    max-width="400"
+    transition="dialog-top-transition"
   >
-    Test123
-  </div>
+    <v-card>
+      <v-card-text>
+        {{ state.message }}
+      </v-card-text>
+      <v-card-actions class="d-flex justify-end">
+        <v-btn
+          color="primary"
+          @click="confirm"
+        >
+          Confirm
+        </v-btn>
+        <v-btn
+          color="error"
+          @click="decline"
+        >
+          Decline
+        </v-btn>
+      </v-card-actions>
+    </v-card>
+  </v-dialog>
 </template>
 
 
