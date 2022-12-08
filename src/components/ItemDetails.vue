@@ -40,7 +40,9 @@ async function validate () {
   const { valid } = await form.value.validate();
   return valid;
 }
-defineExpose({ validate });
+defineExpose({
+  validate
+});
 </script>
 
 <template>

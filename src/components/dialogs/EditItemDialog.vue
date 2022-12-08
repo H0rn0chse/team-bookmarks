@@ -1,14 +1,18 @@
 <script setup>
-import { ref } from "vue";
+import { ref, inject } from "vue";
 import ItemDetails from "@/components/ItemDetails.vue";
 import { useDialogStore } from "@/stores/dialog";
 
 const dialogStore = useDialogStore();
+const confirm = inject("confirm");
 
-function deleteBookmark () {
+async function deleteBookmark () {
   // todo user confirmation
-  dialogStore.hideEdit();
-  dialogStore.deleteEditItem();
+  const userConfirmed = await confirm("Are you sure?");
+  if (userConfirmed) {
+    dialogStore.hideEdit();
+    dialogStore.deleteEditItem();
+  }
 }
 
 function hideBookmark () {
