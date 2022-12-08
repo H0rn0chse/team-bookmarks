@@ -21,6 +21,7 @@ provide("showError", (message) => {
 </script>
 
 <template>
+  <!-- test -->
   <v-app
     id="app"
     theme="dark"
