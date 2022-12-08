@@ -84,7 +84,7 @@ export async function savePers () {
 
 /**
  * Mixes personalization into the original data
- * HJandles inconsistencies in the personalization
+ * Handles inconsistencies in the personalization
  * @param {object} originalData
  * @param {object} pers
  * @returns {object} The personalized data
@@ -119,6 +119,8 @@ function mixinPers (originalData, pers) {
       entityData[itemId] = mergeProps(entityData[itemId], persEntity[itemId]);
     });
   });
+  // remove assignments to non-existing groups
+  sanitizeGroupAssignments(data);
   return data;
 }
 
@@ -150,7 +152,21 @@ function mergeProps (originalObj, newObj) {
   return data;
 }
 
+function sanitizeGroupAssignments (data) {
+  const groupIds = Object.keys(data.groups);
+  Object.keys(data.items).forEach(key => {
+    const item = data.items[key];
+    if (!item.group || groupIds.includes(item.group)) {
+      return;
+    }
+    console.error(`Validation: Found and removed assignment to non-existing group ${item.group} in item ${key}.`);
+    addToTrash("items", { id: item.id, group: item.group });
+    item.group = null;
+  });
+}
+
 function addToTrash (entityKey, item) {
+  item.deletedOn = new Date().toUTCString();
   const trash = JSON.parse(localStorage.getItem(trashKey)) || {};
   if (!trash[entityKey]) {
     trash[entityKey] = [];
