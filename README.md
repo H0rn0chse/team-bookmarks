@@ -40,7 +40,7 @@ npm run build
 ```
 
 ## Libraries
- * Github Corners [github.com/YunYouJun/wc-github-corners](https://github.com/YunYouJun/wc-github-corners)
+ * Github Corners [github.com/YuskaWu/github-corner-element](https://github.com/YuskaWu/github-corner-element)
  * Icons [github.com/feathericons/feather](https://github.com/feathericons/feather)
  * More Icons [github.com/Templarian/MaterialDesign](https://github.com/Templarian/MaterialDesign)
  * Vue [vuejs.org](https://vuejs.org/)

@@ -1,5 +1,5 @@
 <script setup>
-import { readonly, computed, reactive, ref, defineExpose } from "vue";
+import { readonly, computed, reactive, ref } from "vue";
 import { useDialogStore } from "@/stores/dialog";
 import { useMainStore } from "@/stores/main";
 

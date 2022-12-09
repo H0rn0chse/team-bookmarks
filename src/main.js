@@ -5,7 +5,7 @@
  */
 
 // Github-Corner
-import "wc-github-corners";
+import "github-corner-element";
 
 // Components
 import App from "@/App.vue";
