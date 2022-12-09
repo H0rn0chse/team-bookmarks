@@ -1,9 +1,12 @@
 <script setup>
-import {} from "vue";
+import { reactive } from "vue";
 import { useDialogStore } from "@/stores/dialog";
+import Tags from "@/components/dialogs/SettingsDialogSubComponents/SettingsDialog.Tags.vue";
 
 const dialogStore = useDialogStore();
-
+const data = reactive({
+  tab: "tags"
+});
 </script>
 
 <template>
@@ -14,9 +17,32 @@ const dialogStore = useDialogStore();
     transition="dialog-top-transition"
   >
     <v-card>
-      <v-card-text>
-        Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
-      </v-card-text>
+      <v-toolbar
+        color="primary"
+      >
+        <v-toolbar-title>Settings</v-toolbar-title>
+      </v-toolbar>
+      <div class="d-flex flex-row">
+        <v-tabs
+          v-model="data.tab"
+          direction="vertical"
+          color="primary"
+        >
+          <v-tab value="tags">
+            <v-icon start>
+              mdi-tab
+            </v-icon>
+            Tags
+          </v-tab>
+        </v-tabs>
+        <v-window
+          v-model="data.tab"
+          class="tags"
+        >
+          <v-window-item value="tags" />
+          <Tags />
+        </v-window>
+      </div>
       <v-card-actions class="d-flex justify-end">
         <v-btn
           color="primary"
@@ -29,6 +55,8 @@ const dialogStore = useDialogStore();
   </v-dialog>
 </template>
 
-
 <style scoped>
+.tags {
+  width: 100%
+}
 </style>

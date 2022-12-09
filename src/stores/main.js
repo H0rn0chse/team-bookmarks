@@ -37,6 +37,9 @@ export const useMainStore = defineStore("main", {
           };
         });
     },
+    allGroups (state) {
+      return state.groups;
+    },
     /**
      * Calculates a list of searchable strings based on ALL items
      * @param {object} state
@@ -158,5 +161,22 @@ export const useMainStore = defineStore("main", {
       // persist changes
       this.saveData();
     },
+    addGroup (newGroup) {
+      // NYI
+    },
+    deleteGroup (groupId) {
+      // NYI
+    },
+    updateGroup (groupId, props) {
+      const group = this.groups[groupId];
+      if (group) {
+        Object.keys(props).forEach((key) => {
+          const value = props[key];
+          group[key] = value;
+        });
+      } else {
+        console.error(`Could not find group: ${groupId}`);
+      }
+    }
   },
 });
