@@ -29,6 +29,16 @@ function setSelectedTag (tag) {
 function saveTag () {
   mainStore.updateGroup(data.selectedTag.id, data.previewTag);
 }
+
+function addNewTag () {
+  let newTag = {
+    title: "New Tag",
+    background: "white",
+    color: "black"
+  };
+  const idOfNewTag = mainStore.addGroup(newTag);
+  setSelectedTag(preparedData.value.tags[idOfNewTag]);
+}
 </script>
 
 <template>
@@ -53,6 +63,12 @@ function saveTag () {
       >
         {{ tag.title }}
       </li>
+      <v-btn
+        icon="mdi-plus"
+        class="addButton"
+        size="x-small"
+        @click="addNewTag"
+      />
     </pane>
     <!-- Edit section -->
     <pane size="80">
@@ -137,6 +153,12 @@ function saveTag () {
 </template>
 
 <style scoped>
+.addButton {
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+}
+
 .colorpicker >>> .picker-popup{
   position: relative;
   left: 0 !important;
@@ -146,6 +168,7 @@ function saveTag () {
 
 .splitpane >>> .splitpanes__pane {
   background-color: transparent;
+  height: auto;
 }
 
 .tag {

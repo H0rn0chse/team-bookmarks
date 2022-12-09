@@ -165,19 +165,20 @@ export const useMainStore = defineStore("main", {
       let newId;
       do {
         newId = uuidV4();
-      } while (this.Groups[newId]);
+      } while (this.groups[newId]);
 
       newGroup.id = newId;
 
       if (!isValidEntityItem("groups", newGroup)) {
         console.error("Late validation failed unexpectedly");
-        this.showError("Bookmark could not be added");
+        this.showError("Group could not be added");
       }
 
-      this.Groups[newGroup.id] = newGroup;
+      this.groups[newGroup.id] = newGroup;
 
       // persist changes
       this.saveData();
+      return newId;
     },
     deleteGroup (groupId) {
       const group = this.groups[groupId];
