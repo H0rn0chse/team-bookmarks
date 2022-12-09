@@ -17,7 +17,9 @@ const data = reactive({
   previewTag: { }
 });
 
-setSelectedTag(preparedData.value.tags[Object.keys(preparedData.value.tags)[0]]);
+if (Object.keys(preparedData.value.tags).length) {
+  setSelectedTag(preparedData.value.tags[Object.keys(preparedData.value.tags)[0]]);
+}
 
 function setSelectedTag (tag) {
   data.selectedTag = tag;
@@ -72,82 +74,86 @@ function addNewTag () {
     </pane>
     <!-- Edit section -->
     <pane size="80">
-      <v-card flat>
-        <v-text-field
-          v-model="data.previewTag.title"
-          label="Title"
-        />
-      </v-card>
-      <v-card flat>
-        <v-text-field
-          v-model="data.previewTag.background"
-          label="Background Color"
+      <div v-if="(data.selectedTag != null)">
+        <v-card
+          flat
         >
-          <color-input
+          <v-text-field
+            v-model="data.previewTag.title"
+            label="Title"
+          />
+        </v-card>
+        <v-card flat>
+          <v-text-field
             v-model="data.previewTag.background"
-            format="rgb"
-            class="colorpicker"
-          />
-        </v-text-field>
-      </v-card>
-      <v-card flat>
-        <v-text-field
-          v-model="data.previewTag.color"
-          label="Text Color"
-        >
-          <color-input
-            v-model="data.previewTag.color"
-            format="rgb"
-            class="colorpicker"
-          />
-        </v-text-field>
-      </v-card>
-      <!-- Preview Item -->
-      <v-card>
-        <li
-          class="item d-flex align-center"
-          :style="{ backgroundColor: data.previewTag.background, color: data.previewTag.color, borderColor: data.previewTag.color, display: '' }"
-        >
-          <a
-            class="d-flex align-center"
-            href="javascript:undefined"
+            label="Background Color"
           >
-            Example Item
-            <vue-feather
-              title="Open in New Tab"
-              size="1em"
-              :stroke="data.previewTag.color"
-              type="external-link"
-              style="marginLeft:0.2em;"
+            <color-input
+              v-model="data.previewTag.background"
+              format="rgb"
+              class="colorpicker"
             />
-          </a>
-          <vue-feather
-            title="Toggle Favorite"
-            class="itemIcon"
-            size="1.5em"
-            :stroke="data.previewTag.color"
-            fill="none"
-            type="star"
-          />
-          <span class="end d-flex align-center">
+          </v-text-field>
+        </v-card>
+        <v-card flat>
+          <v-text-field
+            v-model="data.previewTag.color"
+            label="Text Color"
+          >
+            <color-input
+              v-model="data.previewTag.color"
+              format="rgb"
+              class="colorpicker"
+            />
+          </v-text-field>
+        </v-card>
+        <!-- Preview Item -->
+        <v-card>
+          <li
+            class="item d-flex align-center"
+            :style="{ backgroundColor: data.previewTag.background, color: data.previewTag.color, borderColor: data.previewTag.color, display: '' }"
+          >
+            <a
+              class="d-flex align-center"
+              href="javascript:undefined"
+            >
+              Example Item
+              <vue-feather
+                title="Open in New Tab"
+                size="1em"
+                :stroke="data.previewTag.color"
+                type="external-link"
+                style="marginLeft:0.2em;"
+              />
+            </a>
             <vue-feather
-              title="Show Details"
+              title="Toggle Favorite"
               class="itemIcon"
               size="1.5em"
               :stroke="data.previewTag.color"
-              type="more-horizontal"
+              fill="none"
+              type="star"
             />
-          </span>
-        </li>
-        <v-card-actions class="d-flex justify-end">
-          <v-btn
-            color="primary"
-            @click="saveTag"
-          >
-            Save Tag
-          </v-btn>
-        </v-card-actions>
-      </v-card>
+            <span class="end d-flex align-center">
+              <vue-feather
+                title="Show Details"
+                class="itemIcon"
+                size="1.5em"
+                :stroke="data.previewTag.color"
+                type="more-horizontal"
+              />
+            </span>
+          </li>
+          <v-card-actions class="d-flex justify-end">
+            <v-btn
+              color="primary"
+              @click="saveTag"
+            >
+              Save Tag
+            </v-btn>
+          </v-card-actions>
+        </v-card>
+      </div>
     </pane>
   </splitpanes>
 </template>
