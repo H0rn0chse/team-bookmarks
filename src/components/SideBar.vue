@@ -38,7 +38,6 @@ function showAddItemDialog () {
     <div class="top d-flex flex-column align-center">
       <vue-feather
         :size="icons.size"
-        :stroke="icons.color"
         type="settings"
         title="Settings"
         class="sideItem"
@@ -50,7 +49,6 @@ function showAddItemDialog () {
       >
         <vue-feather
           :size="icons.size"
-          :stroke="icons.color"
           type="upload-cloud"
           @click="importDataLocal"
         />
@@ -61,7 +59,6 @@ function showAddItemDialog () {
       >
         <vue-feather
           :size="icons.size"
-          :stroke="icons.color"
           type="download-cloud"
           @click="exportDataLocal"
         />
@@ -74,7 +71,6 @@ function showAddItemDialog () {
       >
         <vue-feather
           :size="icons.size"
-          :stroke="icons.color"
           type="plus-square"
           @click="showAddItemDialog"
         />
@@ -102,6 +98,10 @@ function showAddItemDialog () {
   margin-top: 1em;
   margin-bottom: 1em;
   cursor: pointer;
+}
+
+.vue-feather:hover {
+  color: var(--common-primary-light);
 }
 
 </style>

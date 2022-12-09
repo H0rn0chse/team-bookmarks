@@ -67,7 +67,6 @@ function scrollTop () {
               title="Open in New Tab"
               class="linkIcon growing"
               size="1em"
-              :stroke="item.iconColor"
               type="external-link"
             />
           </a>
@@ -86,7 +85,6 @@ function scrollTop () {
             title="Show Details"
             class="itemIcon"
             :size="item.iconSize"
-            :stroke="item.iconColor"
             type="more-horizontal"
             @click="showBookmarkDetail(item.id)"
           />
@@ -136,6 +134,10 @@ a, a:visited {
   border-radius: 10px;
   margin: 1em;
   padding: 0.5em;
+}
+
+.item:hover {
+  filter: brightness(130%);
 }
 
 @media only screen and (min-width: 960px) {
