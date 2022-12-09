@@ -24,6 +24,9 @@ const keywordSuggestions = computed({
       .filter(keyword => !dialogStore.itemDetails.keywords.includes(keyword));
   }
 });
+const groups = computed(() => {
+  return Object.values(mainStore.allGroups);
+});
 
 const form = ref(null);
 const formValidation = reactive({
@@ -70,7 +73,6 @@ defineExpose({
       v-model="dialogStore.itemDetails.description"
       label="Description"
     />
-    <!-- TODO Group -->
     <v-combobox
       v-model="dialogStore.itemDetails.keywords"
       :items="keywordSuggestions"
@@ -83,9 +85,16 @@ defineExpose({
       chips
       clearable
     />
+    <v-select
+      v-model="dialogStore.itemDetails.group"
+      clearable
+      label="Tag"
+      :items="groups"
+      item-text="title"
+      item-value="id"
+    />
   </v-form>
 </template>
-
 
 <style scoped>
 </style>
