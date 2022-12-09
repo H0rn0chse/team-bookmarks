@@ -162,12 +162,41 @@ export const useMainStore = defineStore("main", {
       this.saveData();
     },
     addGroup (newGroup) {
-      // NYI
+      let newId;
+      do {
+        newId = uuidV4();
+      } while (this.Groups[newId]);
+
+      newGroup.id = newId;
+
+      if (!isValidEntityItem("groups", newGroup)) {
+        console.error("Late validation failed unexpectedly");
+        this.showError("Bookmark could not be added");
+      }
+
+      this.Groups[newGroup.id] = newGroup;
+
+      // persist changes
+      this.saveData();
     },
     deleteGroup (groupId) {
-      // NYI
+      const group = this.groups[groupId];
+      if (group) {
+        delete this.groups[groupId];
+      } else {
+        console.error(`Could not find group: ${groupId}`);
+        this.showError("Group could not be deleted");
+      }
+
+      // persist changes
+      this.saveData();
     },
     updateGroup (groupId, props) {
+      if (!isValidPersItem("groups", props)) {
+        console.error("Late validation failed unexpectedly");
+        this.showError("Group could not be updated");
+      }
+
       const group = this.groups[groupId];
       if (group) {
         Object.keys(props).forEach((key) => {
@@ -177,6 +206,9 @@ export const useMainStore = defineStore("main", {
       } else {
         console.error(`Could not find group: ${groupId}`);
       }
+
+      // persist changes
+      this.saveData();
     }
   },
 });
