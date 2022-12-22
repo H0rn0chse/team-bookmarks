@@ -1,7 +1,7 @@
 <script setup>
 import { reactive } from "vue";
 import { useDialogStore } from "@/stores/dialog";
-import Tags from "@/components/dialogs/SettingsDialogSubComponents/SettingsDialog.Tags.vue";
+import TagsEditor from "@/components/settingsEntries/TagsEditorEntry.vue";
 
 const dialogStore = useDialogStore();
 const data = reactive({
@@ -40,7 +40,7 @@ const data = reactive({
           class="tags"
         >
           <v-window-item value="tags" />
-          <Tags />
+          <TagsEditor />
         </v-window>
       </div>
       <v-card-actions class="d-flex justify-end">
