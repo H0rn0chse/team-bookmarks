@@ -165,14 +165,14 @@ function addNewTag () {
   margin-right: auto;
 }
 
-.colorpicker >>> .picker-popup{
+.colorpicker :deep(.picker-popup) {
   position: relative;
   left: 0 !important;
   top: 0 !important;
   cursor: pointer
 }
 
-.splitpane >>> .splitpanes__pane {
+.splitpane :deep(.splitpanes__pane) {
   background-color: transparent;
   height: auto;
 }
