@@ -2,8 +2,6 @@
 import { computed, reactive } from "vue";
 import { useMainStore } from "@/stores/main";
 import ColorInput from "vue-color-input";
-import { Splitpanes, Pane } from "splitpanes";
-import "splitpanes/dist/splitpanes.css";
 
 const mainStore = useMainStore();
 const preparedData = computed(() => {
@@ -44,121 +42,137 @@ function addNewTag () {
 </script>
 
 <template>
-  <splitpanes class="splitpane default-theme">
+  <div class="container">
     <!-- Tag list -->
-    <pane size="20">
-      <v-card
-        flat
-        class="align-center"
-      >
-        <v-card-text>
-          Available Tags
-        </v-card-text>
-      </v-card>
-      <li
-        v-for="tag in preparedData.tags"
-        :key="tag.id"
-        class="tag d-flex align-center"
-        :class="tag.id === data.selectedTag.id ? 'selectedTag' : ''"
-        :style="{ backgroundColor: tag.background, color: tag.color }"
-        @click="setSelectedTag(tag)"
-      >
-        {{ tag.title }}
-      </li>
+    <div class="tagList">
+      <h3>Available Tags</h3>
+      <ul>
+        <li
+          v-for="tag in preparedData.tags"
+          :key="tag.id"
+          class="tagListEntry d-flex align-center"
+          :class="tag.id === data.selectedTag.id ? 'selectedTag' : ''"
+          :style="{ backgroundColor: tag.background, color: tag.color }"
+          @click="setSelectedTag(tag)"
+        >
+          {{ tag.title }}
+        </li>
+      </ul>
       <v-btn
-        icon="mdi-plus"
         class="addButton"
         size="x-small"
+        icon
         @click="addNewTag"
-      />
-    </pane>
+      >
+        <vue-feather
+          title="Add new Tag"
+          type="plus"
+        />
+      </v-btn>
+    </div>
     <!-- Edit section -->
-    <pane size="80">
+    <div class="editSection">
       <div v-if="(data.selectedTag != null)">
-        <v-card
-          flat
+        <v-text-field
+          v-model="data.previewTag.title"
+          label="Title"
+        />
+        <v-text-field
+          v-model="data.previewTag.background"
+          label="Background Color"
         >
-          <v-text-field
-            v-model="data.previewTag.title"
-            label="Title"
-          />
-        </v-card>
-        <v-card flat>
-          <v-text-field
+          <color-input
             v-model="data.previewTag.background"
-            label="Background Color"
-          >
-            <color-input
-              v-model="data.previewTag.background"
-              format="rgb"
-              class="colorpicker"
-            />
-          </v-text-field>
-        </v-card>
-        <v-card flat>
-          <v-text-field
+            format="rgb"
+            class="colorpicker"
+          />
+        </v-text-field>
+        <v-text-field
+          v-model="data.previewTag.color"
+          label="Text Color"
+        >
+          <color-input
             v-model="data.previewTag.color"
-            label="Text Color"
-          >
-            <color-input
-              v-model="data.previewTag.color"
-              format="rgb"
-              class="colorpicker"
-            />
-          </v-text-field>
-        </v-card>
+            format="rgb"
+            class="colorpicker"
+          />
+        </v-text-field>
         <!-- Preview Item -->
-        <v-card>
-          <li
-            class="item d-flex align-center"
-            :style="{ backgroundColor: data.previewTag.background, color: data.previewTag.color, borderColor: data.previewTag.color, display: '' }"
+        <div
+          class="item d-flex align-center"
+          :style="{ backgroundColor: data.previewTag.background, color: data.previewTag.color, borderColor: data.previewTag.color, display: '' }"
+        >
+          <a
+            class="d-flex align-center"
+            href="javascript:undefined"
           >
-            <a
-              class="d-flex align-center"
-              href="javascript:undefined"
-            >
-              Example Item
-              <vue-feather
-                title="Open in New Tab"
-                size="1em"
-                :stroke="data.previewTag.color"
-                type="external-link"
-                style="marginLeft:0.2em;"
-              />
-            </a>
+            Example Item
             <vue-feather
-              title="Toggle Favorite"
+              title="Open in New Tab"
+              size="1em"
+              :stroke="data.previewTag.color"
+              type="external-link"
+              style="marginLeft:0.2em;"
+            />
+          </a>
+          <vue-feather
+            title="Toggle Favorite"
+            class="itemIcon"
+            size="1.5em"
+            :stroke="data.previewTag.color"
+            fill="none"
+            type="star"
+          />
+          <span class="end d-flex align-center">
+            <vue-feather
+              title="Show Details"
               class="itemIcon"
               size="1.5em"
               :stroke="data.previewTag.color"
-              fill="none"
-              type="star"
+              type="more-horizontal"
             />
-            <span class="end d-flex align-center">
-              <vue-feather
-                title="Show Details"
-                class="itemIcon"
-                size="1.5em"
-                :stroke="data.previewTag.color"
-                type="more-horizontal"
-              />
-            </span>
-          </li>
-          <v-card-actions class="d-flex justify-end">
-            <v-btn
-              color="primary"
-              @click="saveTag"
-            >
-              Save Tag
-            </v-btn>
-          </v-card-actions>
-        </v-card>
+          </span>
+        </div>
+        <v-btn
+          color="primary"
+          title="Save Tag"
+          @click="saveTag"
+        >
+          Save Tag
+        </v-btn>
+        <v-btn
+          color=""
+          title="Reset Tag"
+          style="marginLeft:0.2em;"
+          @click="setSelectedTag(data.selectedTag)"
+        >
+          Reset Tag
+        </v-btn>
       </div>
-    </pane>
-  </splitpanes>
+    </div>
+  </div>
 </template>
 
 <style scoped>
+
+.container {
+  margin-left: 1em;
+  margin-bottom: 1em;
+  display: grid;
+  grid-template-columns: 20% auto;
+  grid-template-rows: auto;
+  grid-template-areas: 
+    "tagList editSection";
+}
+
+.tagList {
+  grid-area: tagList;
+}
+
+.editSection {
+  grid-area: editSection;
+}
+
 .addButton {
   display: block;
   margin-left: auto;
@@ -172,12 +186,8 @@ function addNewTag () {
   cursor: pointer
 }
 
-.splitpane :deep(.splitpanes__pane) {
-  background-color: transparent;
-  height: auto;
-}
 
-.tag {
+.tagListEntry {
     max-width: 80%;
     min-width: 5em;
     border-color: var(--common-font-secondary);
