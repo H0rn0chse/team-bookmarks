@@ -3,6 +3,7 @@ import { computed, ref } from "vue";
 import { useMainStore } from "@/stores/main";
 import { useDialogStore } from "@/stores/dialog";
 import { useSearchStore } from "@/stores/search";
+import LinkItem from "@/components/LinkItem.vue";
 
 const mainStore = useMainStore();
 const searchStore = useSearchStore();
@@ -10,18 +11,9 @@ const dialogStore = useDialogStore();
 
 const preparedItems = computed(() => {
   return mainStore.allItems.map(item => {
-    const iconColor = item.groupColor || "var(--common-font-primary)";
     return {
       ...item,
-      iconColor,
-      iconSize: "1.5em",
-      itemColor: item.groupColor || "var(--common-font-primary)",
-      itemBackground: item.groupBackground || "var(--common-bg-light)",
-      favoriteStroke: item.favorite ? "var(--common-favorite)" : iconColor,
-      //favoriteStroke: iconColor,
-      favoriteFill: item.favorite ? "var(--common-favorite)" : "none",
-      // favoriteFill: item.favorite ? iconColor : "none",
-      display: searchStore.filteredItems.includes(item.id) ? "" : "none !important",
+      hidden: !searchStore.filteredItems.includes(item.id),
     };
   });
 });
@@ -46,51 +38,19 @@ function scrollTop () {
     ref="container"
     class="container containerList"
   >
-    <v-lazy
+    <LinkItem
       v-for="item in preparedItems"
       :key="item.id"
       tag="li"
-      class="item"
-      :style="{ backgroundColor: item.itemBackground, color: item.itemColor, borderColor: item.itemColor, display: item.display }"
-    >
-      <div class="itemContainer flexContainer">
-        <div class="start shrinking flexContainer">
-          <a
-            class="link shrinking flexContainer"
-            :href="item.src"
-            target="_blank"
-          >
-            <span class="linkText shrinking">
-              {{ item.title }}
-            </span>
-            <vue-feather
-              title="Open in New Tab"
-              class="linkIcon growing"
-              size="1em"
-              type="external-link"
-            />
-          </a>
-          <vue-feather
-            title="Toggle Favorite"
-            class="itemIcon growing"
-            :size="item.iconSize"
-            :stroke="item.favoriteStroke"
-            :fill="item.favoriteFill"
-            type="star"
-            @click="toggleFavorite(item.id)"
-          />
-        </div>
-        <div class="end growing flexContainer">
-          <vue-feather
-            title="Show Details"
-            class="itemIcon"
-            :size="item.iconSize"
-            type="more-horizontal"
-            @click="showBookmarkDetail(item.id)"
-          />
-        </div>
-      </div>
-    </v-lazy>
+      :title="item.title"
+      :src="item.src"
+      :background-color="item.groupBackground"
+      :font-color="item.groupColor"
+      :is-favorite="item.favorite"
+      :hidden="item.hidden"
+      @favorite-click="toggleFavorite(item.id)"
+      @more-click="showBookmarkDetail(item.id)"
+    />
     <v-btn
       id="btn-toTop"
       title="Scroll to Top"

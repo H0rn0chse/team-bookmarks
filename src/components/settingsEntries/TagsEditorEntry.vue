@@ -1,7 +1,8 @@
 <script setup>
 import { computed, reactive } from "vue";
-import { useMainStore } from "@/stores/main";
 import ColorInput from "vue-color-input";
+import { useMainStore } from "@/stores/main";
+import LinkItem from "@/components/LinkItem.vue";
 
 const mainStore = useMainStore();
 const preparedData = computed(() => {
@@ -84,7 +85,7 @@ function addNewTag () {
           <color-input
             v-model="data.previewTag.background"
             format="rgb"
-            class="colorpicker"
+            class="colorPicker"
           />
         </v-text-field>
         <v-text-field
@@ -94,45 +95,15 @@ function addNewTag () {
           <color-input
             v-model="data.previewTag.color"
             format="rgb"
-            class="colorpicker"
+            class="colorPicker"
           />
         </v-text-field>
         <!-- Preview Item -->
-        <div
-          class="item d-flex align-center"
-          :style="{ backgroundColor: data.previewTag.background, color: data.previewTag.color, borderColor: data.previewTag.color, display: '' }"
-        >
-          <a
-            class="d-flex align-center"
-            href="javascript:undefined"
-          >
-            Example Item
-            <vue-feather
-              title="Open in New Tab"
-              size="1em"
-              :stroke="data.previewTag.color"
-              type="external-link"
-              style="marginLeft:0.2em;"
-            />
-          </a>
-          <vue-feather
-            title="Toggle Favorite"
-            class="itemIcon"
-            size="1.5em"
-            :stroke="data.previewTag.color"
-            fill="none"
-            type="star"
-          />
-          <span class="end d-flex align-center">
-            <vue-feather
-              title="Show Details"
-              class="itemIcon"
-              size="1.5em"
-              :stroke="data.previewTag.color"
-              type="more-horizontal"
-            />
-          </span>
-        </div>
+        <LinkItem
+          :background-color="data.previewTag.background"
+          :font-color="data.previewTag.color"
+          title="Example Item"
+        />
         <v-btn
           color="primary"
           title="Save Tag"
@@ -179,13 +150,12 @@ function addNewTag () {
   margin-right: auto;
 }
 
-.colorpicker :deep(.picker-popup) {
+.colorPicker :deep(.picker-popup) {
   position: relative;
   left: 0 !important;
   top: 0 !important;
   cursor: pointer
 }
-
 
 .tagListEntry {
     max-width: 80%;
@@ -201,39 +171,5 @@ function addNewTag () {
 
 .selectedTag {
   outline: 2px solid red;
-}
-
-a, a:visited {
-    color: inherit;
-}
-
-.end {
-    flex-grow: 1;
-    justify-content: flex-end;
-}
-
-.itemIcon {
-    padding-left: 1em;
-    cursor: pointer;
-}
-
-.end > .itemIcon {
-    padding-left: 0.5em;
-}
-
-.item {
-    max-width: 30em;
-    border-color: var(--common-font-secondary);
-    border-width: 2px;
-    border-style: solid;
-    border-radius: 10px;
-    margin: 1em;
-    padding: 0.5em;
-}
-
-@media only screen and (min-width: 960px) {
-  .item {
-    width: 30em;
-  }
 }
 </style>
