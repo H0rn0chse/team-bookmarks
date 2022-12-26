@@ -38,6 +38,13 @@ export function isOriginalItem (itemId) {
   return !!cachedResult?.items?.[itemId];
 }
 
+export function isOriginalGroup (groupId) {
+  if (!cachedResult || !groupId) {
+    return false;
+  }
+  return !!cachedResult?.groups?.[groupId];
+}
+
 async function getPersFromLocalStorage () {
   const pers = JSON.parse(localStorage.getItem(localStorageKey));
   if (!pers) {
