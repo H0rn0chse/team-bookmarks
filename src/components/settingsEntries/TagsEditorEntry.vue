@@ -1,44 +1,51 @@
 <script setup>
-import { computed, reactive } from "vue";
-import ColorInput from "vue-color-input";
+import { computed, reactive, ref } from "vue";
 import { useMainStore } from "@/stores/main";
 import LinkItem from "@/components/LinkItem.vue";
 
 const mainStore = useMainStore();
-const preparedData = computed(() => {
-  return {
-    tags: mainStore.allGroups,
-    items: mainStore.allItems
-  };
-});
-const data = reactive({
-  selectedTag: null,
-  previewTag: { }
+const preparedTags = computed(() => {
+  return mainStore.allGroups;
 });
 
-if (Object.keys(preparedData.value.tags).length) {
-  setSelectedTag(preparedData.value.tags[Object.keys(preparedData.value.tags)[0]]);
-}
+const previewTag = reactive({
+  title: "",
+  background: "#FFF",
+  color: "#FFF"
+});
+
+const currentTagId = ref("");
 
 function setSelectedTag (tag) {
-  data.selectedTag = tag;
-  data.previewTag.title = tag.title;
-  data.previewTag.background = tag.background;
-  data.previewTag.color = tag.color;
+  currentTagId.value = tag.id;
+  previewTag.title = tag.title;
+  previewTag.background = tag.background;
+  previewTag.color = tag.color;
+}
+
+// set initial data
+if (Object.keys(preparedTags.value).length) {
+  const firstTag = preparedTags.value[Object.keys(preparedTags.value)[0]];
+  setSelectedTag(firstTag);
+}
+
+function resetTag () {
+  const tagData = preparedTags.value[currentTagId.value];
+  setSelectedTag(tagData);
 }
 
 function saveTag () {
-  mainStore.updateGroup(data.selectedTag.id, data.previewTag);
+  mainStore.updateGroup(currentTagId.value, previewTag);
 }
 
 function addNewTag () {
   let newTag = {
     title: "New Tag",
-    background: "white",
-    color: "black"
+    background: "#000",
+    color: "#FFF"
   };
   const idOfNewTag = mainStore.addGroup(newTag);
-  setSelectedTag(preparedData.value.tags[idOfNewTag]);
+  setSelectedTag(preparedTags.value[idOfNewTag]);
 }
 </script>
 
@@ -49,10 +56,10 @@ function addNewTag () {
       <h3>Available Tags</h3>
       <ul>
         <li
-          v-for="tag in preparedData.tags"
+          v-for="tag in preparedTags"
           :key="tag.id"
           class="tagListEntry d-flex align-center"
-          :class="tag.id === data.selectedTag.id ? 'selectedTag' : ''"
+          :class="tag.id === currentTagId ? 'selectedTag' : ''"
           :style="{ backgroundColor: tag.background, color: tag.color }"
           @click="setSelectedTag(tag)"
         >
@@ -73,35 +80,57 @@ function addNewTag () {
     </div>
     <!-- Edit section -->
     <div class="editSection">
-      <div v-if="(data.selectedTag != null)">
+      <div v-if="(currentTagId !== '')">
         <v-text-field
-          v-model="data.previewTag.title"
+          v-model="previewTag.title"
           label="Title"
         />
         <v-text-field
-          v-model="data.previewTag.background"
+          v-model="previewTag.background"
           label="Background Color"
+          readonly
         >
-          <color-input
-            v-model="data.previewTag.background"
-            format="rgb"
+          <div
             class="colorPicker"
-          />
+            :style="{ backgroundColor: previewTag.background }"
+          >
+            <v-menu
+              activator="parent"
+              :close-on-content-click="false"
+              close-delay="500"
+              open-on-hover
+            >
+              <v-color-picker
+                v-model="previewTag.background"
+              />
+            </v-menu>
+          </div>
         </v-text-field>
         <v-text-field
-          v-model="data.previewTag.color"
+          v-model="previewTag.color"
           label="Text Color"
+          readonly
         >
-          <color-input
-            v-model="data.previewTag.color"
-            format="rgb"
+          <div
             class="colorPicker"
-          />
+            :style="{ backgroundColor: previewTag.color }"
+          >
+            <v-menu
+              activator="parent"
+              :close-on-content-click="false"
+              close-delay="500"
+              open-on-hover
+            >
+              <v-color-picker
+                v-model="previewTag.color"
+              />
+            </v-menu>
+          </div>
         </v-text-field>
         <!-- Preview Item -->
         <LinkItem
-          :background-color="data.previewTag.background"
-          :font-color="data.previewTag.color"
+          :background-color="previewTag.background"
+          :font-color="previewTag.color"
           title="Example Item"
         />
         <v-btn
@@ -115,7 +144,7 @@ function addNewTag () {
           color=""
           title="Reset Tag"
           style="marginLeft:0.2em;"
-          @click="setSelectedTag(data.selectedTag)"
+          @click="resetTag"
         >
           Reset Tag
         </v-btn>
@@ -150,11 +179,13 @@ function addNewTag () {
   margin-right: auto;
 }
 
-.colorPicker :deep(.picker-popup) {
-  position: relative;
-  left: 0 !important;
-  top: 0 !important;
-  cursor: pointer
+.colorPicker {
+  margin-right: 0.5em;
+  width: 2em;
+  height: 2em;
+  border-width: 2px;
+  border-radius: 5px;
+  cursor: pointer;
 }
 
 .tagListEntry {
@@ -170,6 +201,7 @@ function addNewTag () {
 }
 
 .selectedTag {
-  outline: 2px solid red;
+  border-color: black;
+  border-width: 3px;
 }
 </style>

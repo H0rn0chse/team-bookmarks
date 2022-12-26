@@ -8005,8 +8005,8 @@
         "123-456": {
             "id": "123-456",
             "title": "my Special pink Group",
-            "color": "red",
-            "background": "rgb(239, 207, 227)"
+            "color": "#FF0000",
+            "background": "#EFCFE3"
         }
     }
 }
