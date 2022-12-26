@@ -28,6 +28,7 @@ const combobox = readonly({
         :delimiters="combobox.delimiters"
         label="Enter Search Terms"
         :menu-props="combobox.menuProps"
+        autofocus
         hide-selected
         closable-chips
         multiple

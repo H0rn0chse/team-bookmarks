@@ -88,7 +88,7 @@ defineExpose({
     <v-select
       v-model="dialogStore.itemDetails.group"
       clearable
-      label="Tag"
+      label="Color Tag"
       :items="groups"
       item-text="title"
       item-value="id"
