@@ -19,11 +19,12 @@ const data = reactive({
   >
     <v-card>
       <v-card-title>Settings</v-card-title>
-      <div class="d-flex flex-row">
+      <div class="flexContainer">
         <v-tabs
           v-model="data.tab"
           direction="vertical"
           color="primary"
+          class="growing"
         >
           <v-tab value="tagEditor">
             <vue-feather
@@ -42,7 +43,7 @@ const data = reactive({
         </v-tabs>
         <v-window
           v-model="data.tab"
-          class="settingsWindow"
+          class="settingsWindow shrinking"
         >
           <v-window-item value="tagEditor">
             <TagsEditor />
@@ -65,8 +66,25 @@ const data = reactive({
 </template>
 
 <style scoped>
+.flexContainer {
+  display: flex;
+  flex-direction: row;
+  overflow: hidden;
+}
+
+.growing {
+  flex-grow: 1;
+  flex-shrink: 0;
+}
+
+.shrinking {
+  flex-shrink: 1;
+  min-width: 0;
+}
+
 .settingsWindow {
   width: 100%;
+  overflow: auto;
 }
 
 .settingsEntryIcon {

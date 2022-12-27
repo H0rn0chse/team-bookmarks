@@ -38,19 +38,25 @@ function setSelectedTag (tag) {
 // set initial data
 setSelectedTag();
 
+const resetSnack = ref(false);
 function resetTag () {
   const tagData = preparedTags.value[currentTagId.value];
   setSelectedTag(tagData);
+  resetSnack.value = true;
 }
 
+const saveSnack = ref(false);
 function saveTag () {
   mainStore.updateGroup(currentTagId.value, previewTag);
+  saveSnack.value = true;
 }
 
+const deleteSnack = ref(false);
 async function deleteTag () {
   const userConfirmed = await confirm("Are you sure? This Action will permanently delete the Color Tag");
   if (userConfirmed) {
     mainStore.deleteGroup(currentTagId.value);
+    deleteSnack.value = true;
     setSelectedTag();
   }
 }
@@ -158,6 +164,12 @@ function addNewTag () {
           >
             Save Tag
           </v-btn>
+          <v-snackbar
+            v-model="saveSnack"
+            timeout="1000"
+          >
+            Color Tag Saved
+          </v-snackbar>
           <v-btn
             color=""
             title="Reset Tag"
@@ -166,6 +178,12 @@ function addNewTag () {
           >
             Reset Tag
           </v-btn>
+          <v-snackbar
+            v-model="resetSnack"
+            timeout="1000"
+          >
+            Color Tag Reset
+          </v-snackbar>
           <v-btn
             color=""
             title="Delete Tag"
@@ -183,6 +201,12 @@ function addNewTag () {
               @click="deleteTag"
             />
           </v-btn>
+          <v-snackbar
+            v-model="deleteSnack"
+            timeout="1000"
+          >
+            Color Tag Deleted
+          </v-snackbar>
         </div>
       </div>
     </div>
@@ -190,12 +214,11 @@ function addNewTag () {
 </template>
 
 <style scoped>
-
 .container {
   margin-left: 1em;
   margin-bottom: 1em;
   display: grid;
-  grid-template-columns: 20% auto;
+  grid-template-columns: clamp(9em, 20%, 15em) auto;
   grid-template-rows: auto;
   grid-template-areas: 
     "tagList editSection";
