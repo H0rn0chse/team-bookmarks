@@ -12,19 +12,35 @@ const icons = readonly({
   color: "var(--common-font-primary)"
 });
 
-async function importDataLocal () {
-  const userConfirmed = await confirm("Are you sure? This Action will permanently override your existing Bookmarks!");
-  if (userConfirmed) {
-    console.log ("starting import");
-    await importData();
-    console.log ("import done");
+async function importDataLocal (scope) {
+  switch (scope) {
+    case "clean":
+      var userConfirmed = await confirm("Are you sure? This Action will permanently override your existing Bookmarks!");
+      if (userConfirmed) {
+        console.log ("starting import");
+        await importData();
+        console.log ("import done");
+      }
+      break;
+    case "mergeNewItems":
+    case "mergeAllItems":
+    default:
+      console.error(`scope ${scope} is not implemented yet`);
   }
 }
 
-async function exportDataLocal () {
-  console.log("starting export");
-  await exportData();
-  console.log("export done");
+async function exportDataLocal (scope) {
+  switch (scope) {
+    case "personalizationOnly":
+      console.log("starting export");
+      await exportData();
+      console.log("export done");
+      break;
+    case "allItems":
+    case "searchItems":
+    default:
+      console.error(`scope ${scope} is not implemented yet`);
+  }
 }
 
 function showAddItemDialog () {
@@ -44,25 +60,89 @@ function showAddItemDialog () {
         @click="dialogStore.showSettings"
       />
       <div
+        id="importBtn"
         title="Import"
         class="sideItem"
       >
         <vue-feather
           :size="icons.size"
           type="upload-cloud"
-          @click="importDataLocal"
         />
       </div>
+      <v-menu
+        activator="#importBtn"
+        location="end"
+      >
+        <v-card class="optionsCard">
+          <v-card-title>
+            Import Options
+          </v-card-title>
+          <div class="d-flex flex-column align-start">
+            <v-btn
+              variant="flat"
+              @click="importDataLocal('clean')"
+            >
+              Clean Import
+            </v-btn>
+            <v-btn
+              variant="flat"
+              disabled
+              @click="importDataLocal('mergeNewItems')"
+            >
+              Merge: Import Only new Items
+            </v-btn>
+            <v-btn
+              variant="flat"
+              disabled
+              @click="importDataLocal('mergeAllItems')"
+            >
+              Merge: Import All Items
+            </v-btn>
+          </div>
+        </v-card>
+      </v-menu>
       <div
+        id="exportBtn"
         title="Export"
         class="sideItem"
       >
         <vue-feather
           :size="icons.size"
           type="download-cloud"
-          @click="exportDataLocal"
         />
       </div>
+      <v-menu
+        activator="#exportBtn"
+        location="end"
+      >
+        <v-card class="optionsCard">
+          <v-card-title>
+            Export Options
+          </v-card-title>
+          <div class="d-flex flex-column align-start">
+            <v-btn
+              variant="flat"
+              disabled
+              @click="exportDataLocal('searchItems')"
+            >
+              Current Search
+            </v-btn>
+            <v-btn
+              variant="flat"
+              @click="exportDataLocal('personalizationOnly')"
+            >
+              Personalization Only
+            </v-btn>
+            <v-btn
+              variant="flat"
+              disabled
+              @click="exportDataLocal('allItems')"
+            >
+              All Items
+            </v-btn>
+          </div>
+        </v-card>
+      </v-menu>
     </div>
     <div class="bottom d-flex flex-column align-center">
       <div
@@ -102,6 +182,16 @@ function showAddItemDialog () {
 
 .vue-feather:hover {
   color: var(--common-primary-light);
+}
+
+.optionsCard {
+  margin-left: 0.5em;
+}
+
+.optionsCard .v-btn {
+  margin-left: 0.5em;
+  margin-right: 0.5em;
+  margin-bottom: 0.5em;
 }
 
 </style>
