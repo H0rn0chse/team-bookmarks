@@ -15,6 +15,8 @@ function getDataFromRepo () {
   return cachedPromise;
 }
 
+export const getOriginalData = getDataFromRepo;
+
 let cachedResult = null;
 async function _getDataFromRepo () {
   try {
@@ -69,12 +71,14 @@ export async function getData () {
   return personalizedData;
 }
 
-export async function extractPers () {
-  const mainStore = useMainStore();
-  const storeData = mainStore.getExportData();
-  const originalData = await getDataFromRepo();
+export async function extractPers (originalData, personalizedData) {
+  if (!originalData || !personalizedData) {
+    const mainStore = useMainStore();
+    personalizedData = mainStore.getExportData();
+    originalData = await getDataFromRepo();
+  }
 
-  const pers = diff(originalData, storeData);
+  const pers = diff(originalData, personalizedData);
   return {
     version: "0.0.1",
     diff: pers

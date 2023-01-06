@@ -27,6 +27,7 @@ export const useMainStore = defineStore("main", {
           }
           return itemA.title.localeCompare(itemB.title);
         })
+        // add group props
         .map((item) => {
           const group = this.groups[item.group];
           return {
@@ -82,10 +83,10 @@ export const useMainStore = defineStore("main", {
   },
   actions: {
     getExportData () {
-      return {
+      return clone({
         items: this.items,
         groups: this.groups,
-      };
+      });
     },
     importData (data) {
       // validation should be already done prior to importing

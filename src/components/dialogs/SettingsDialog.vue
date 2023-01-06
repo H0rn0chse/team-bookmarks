@@ -8,8 +8,6 @@ const dialogStore = useDialogStore();
 const data = reactive({
   tab: "tagEditor"
 });
-
-function noop () {}
 </script>
 
 <template>

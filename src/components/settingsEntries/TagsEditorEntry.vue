@@ -47,7 +47,14 @@ function resetTag () {
 
 const saveSnack = ref(false);
 function saveTag () {
-  mainStore.updateGroup(currentTagId.value, previewTag);
+  const originalTag = preparedTags[currentTagId.value];
+  const tagData = {
+    ...originalTag,
+    title: previewTag.title,
+    background: previewTag.background,
+    color: previewTag.color,
+  };
+  mainStore.updateGroup(currentTagId.value, tagData);
   saveSnack.value = true;
 }
 

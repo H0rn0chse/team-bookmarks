@@ -1,7 +1,7 @@
 <script setup>
 import { readonly, inject } from "vue";
 import { useDialogStore } from "@/stores/dialog";
-import { importData, exportData } from "@/js/ImportExport";
+import { importData, exportData, IMPORT_SCOPE, EXPORT_SCOPE } from "@/js/ImportExport";
 
 const confirm = inject("confirm");
 
@@ -13,35 +13,38 @@ const icons = readonly({
 });
 
 async function importDataLocal (scope) {
+  let confirmationMessage;
   switch (scope) {
-    case "clean":
-      var userConfirmed = await confirm("Are you sure? This Action will permanently override your existing Bookmarks!");
-      if (userConfirmed) {
-        console.log ("starting import");
-        await importData();
-        console.log ("import done");
-      }
+    case IMPORT_SCOPE.deleteOldPersAndImport:
+      confirmationMessage = "Are you sure? This Action will permanently remove your existing Tags and Bookmarks!";
       break;
-    case "mergeNewItems":
-    case "mergeAllItems":
+    case IMPORT_SCOPE.forceMergeItems:
+      confirmationMessage = "Are you sure? This Action might permanently override your existing Tags and Bookmarks!";
+      break;
+    case IMPORT_SCOPE.mergeOnlyNewItems:
+      break;
     default:
       console.error(`scope ${scope} is not implemented yet`);
+      return;
+  }
+
+  let userConfirmed = true;
+  if (confirmationMessage) {
+    userConfirmed = await confirm(confirmationMessage);
+  }
+
+  if (userConfirmed) {
+    await importData(scope);
   }
 }
 
 async function exportDataLocal (scope) {
-  switch (scope) {
-    case "personalizedItems":
-      console.log("starting export");
-      await exportData();
-      console.log("export done");
-      break;
-    case "allItems":
-    case "personalizedSearchItems":
-    case "searchItems":
-    default:
-      console.error(`scope ${scope} is not implemented yet`);
+  if (!EXPORT_SCOPE[scope]) {
+    console.error(`scope ${scope} is not implemented yet`);
+    return;
   }
+
+  await exportData(scope);
 }
 
 function showAddItemDialog () {
@@ -81,21 +84,19 @@ function showAddItemDialog () {
           <div class="d-flex flex-column align-start">
             <v-btn
               variant="flat"
-              @click="importDataLocal('clean')"
+              @click="importDataLocal(IMPORT_SCOPE.deleteOldPersAndImport)"
             >
               Clean Import
             </v-btn>
             <v-btn
               variant="flat"
-              disabled
-              @click="importDataLocal('mergeNewItems')"
+              @click="importDataLocal(IMPORT_SCOPE.mergeOnlyNewItems)"
             >
               Merge: Import Only new Items
             </v-btn>
             <v-btn
               variant="flat"
-              disabled
-              @click="importDataLocal('mergeAllItems')"
+              @click="importDataLocal(IMPORT_SCOPE.forceMergeItems)"
             >
               Merge: Import All Items
             </v-btn>
@@ -123,28 +124,25 @@ function showAddItemDialog () {
           <div class="d-flex flex-column align-start">
             <v-btn
               variant="flat"
-              @click="exportDataLocal('personalizedItems')"
+              @click="exportDataLocal(EXPORT_SCOPE.allItemsPersonalization)"
             >
               All Items (Personalization)
             </v-btn>
             <v-btn
               variant="flat"
-              disabled
-              @click="exportDataLocal('allItems')"
+              @click="exportDataLocal(EXPORT_SCOPE.allItemsCopy)"
             >
               All Items (Full Copy)
             </v-btn>
             <v-btn
               variant="flat"
-              disabled
-              @click="exportDataLocal('personalizedSearchItems')"
+              @click="exportDataLocal(EXPORT_SCOPE.searchItemsPersonalization)"
             >
               Current Search (Personalization)
             </v-btn>
             <v-btn
               variant="flat"
-              disabled
-              @click="exportDataLocal('searchItems')"
+              @click="exportDataLocal(EXPORT_SCOPE.searchItemsCopy)"
             >
               Current Search (Full Copy)
             </v-btn>
