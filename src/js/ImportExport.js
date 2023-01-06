@@ -1,7 +1,7 @@
 import { useMainStore } from "@/stores/main";
 import { useSearchStore } from "@/stores/search";
 import { applyPers, extractPers, getOriginalData } from "@/js/Personalization";
-import { clone, undefinedReplacer } from "@/js/utils";
+import { undefinedReplacer } from "@/js/utils";
 
 let _fileHandler;
 let currentImportScope = null;
@@ -9,7 +9,9 @@ let currentImportScope = null;
 export const IMPORT_SCOPE = {
   deleteOldPersAndImport: "deleteOldPersAndImport",
   mergeOnlyNewItems: "mergeOnlyNewItems",
-  forceMergeItems: "forceMergeItems"
+  propertyMergeItems_PrioImport: "propertyMergeItems_PrioImport",
+  propertyMergeItems_PrioPers: "propertyMergeItems_PrioPers",
+  overrideExistingItems: "overrideExistingItems"
 };
 
 export const EXPORT_SCOPE = {
@@ -50,8 +52,7 @@ function _handleFileSelect (event) {
     reader.onload = async function () {
       try {
         const importedData = JSON.parse(reader.result);
-        // todo: handle scope
-        const personalizedData = await applyPers(importedData, currentImportScope);
+        const personalizedData = await getImportData(importedData, currentImportScope);
 
         const mainStore = useMainStore();
         mainStore.importData(personalizedData);
@@ -63,6 +64,68 @@ function _handleFileSelect (event) {
     };
     reader.readAsText(file);
   }
+}
+
+async function getImportData (importedData, scope) {
+  let personalizedData;
+  const mainStore = useMainStore();
+  const originalData = await getOriginalData();
+
+  if (scope === IMPORT_SCOPE.deleteOldPersAndImport) {
+    personalizedData = await applyPers(originalData, importedData);
+
+  } else if (scope === IMPORT_SCOPE.propertyMergeItems_PrioImport) {
+    personalizedData = mainStore.getExportData();
+    personalizedData = await applyPers(personalizedData, importedData);
+
+  } else if (scope === IMPORT_SCOPE.propertyMergeItems_PrioPers) {
+    const currentPers = await extractPers();
+    personalizedData = await applyPers(originalData, importedData, currentPers);
+
+  } else if (scope === IMPORT_SCOPE.mergeOnlyNewItems) {
+    personalizedData = mainStore.getExportData();
+    const currentPers = await extractPers();
+    // filter importedData based on current personalization diff
+    if (importedData.diff.items) {
+      Object.keys(importedData.diff.items).forEach((itemId) => {
+        if (currentPers.diff?.items?.[itemId]) {
+          delete importedData.diff.items[itemId];
+        }
+      });
+    }
+    if (importedData.diff.groups) {
+      Object.keys(importedData.diff.groups).forEach((groupId) => {
+        if (currentPers.diff?.groups?.[groupId]) {
+          delete importedData.diff.groups[groupId];
+        }
+      });
+    }
+    personalizedData = await applyPers(personalizedData, importedData);
+
+  } else if (scope === IMPORT_SCOPE.overrideExistingItems) {
+    const currentPers = await extractPers();
+    // remove existing personalization for imported items
+    if (currentPers.diff.items) {
+      Object.keys(currentPers.diff.items).forEach((itemId) => {
+        if (importedData.diff?.items?.[itemId]) {
+          delete currentPers.diff.items[itemId];
+        }
+      });
+    }
+    if (currentPers.diff.groups) {
+      Object.keys(importedData.diff.groups).forEach((groupId) => {
+        if (importedData.diff?.groups?.[groupId]) {
+          delete currentPers.diff.groups[groupId];
+        }
+      });
+    }
+    personalizedData = await applyPers(originalData, currentPers, importedData);
+
+  } else {
+    throw new Error("Unsupported Import Scope");
+  }
+
+  return personalizedData;
 }
 
 async function getExportData (scope) {

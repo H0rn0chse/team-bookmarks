@@ -87,14 +87,15 @@ export async function extractPers (originalData, personalizedData) {
 
 /**
  * Applies the personalization to the originalData and validates
- * @param {object} pers
+ * @param {object} originalData original data
+ * @param {...object} pers A personalization object containing a diff
  * @returns {object}
  */
-export async function applyPers (pers) {
-  const originalData = await getDataFromRepo();
-
-  // We could add a migration step here based on pers.version
-  const personalizedData = mixinPers(originalData, pers.diff);
+export async function applyPers (originalData, ...pers) {
+  let personalizedData = originalData;
+  pers.forEach(({ diff }) => {
+    personalizedData = mixinPers(personalizedData, diff);
+  });
   return personalizedData;
 }
 

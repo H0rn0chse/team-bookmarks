@@ -18,8 +18,9 @@ async function importDataLocal (scope) {
     case IMPORT_SCOPE.deleteOldPersAndImport:
       confirmationMessage = "Are you sure? This Action will permanently remove your existing Tags and Bookmarks!";
       break;
-    case IMPORT_SCOPE.forceMergeItems:
-      confirmationMessage = "Are you sure? This Action might permanently override your existing Tags and Bookmarks!";
+    case IMPORT_SCOPE.propertyMergeItems_PrioImport:
+    case IMPORT_SCOPE.propertyMergeItems_PrioPers:
+      confirmationMessage = "Are you sure? This Action might permanently change your existing Tags and Bookmarks!";
       break;
     case IMPORT_SCOPE.mergeOnlyNewItems:
       break;
@@ -90,15 +91,27 @@ function showAddItemDialog () {
             </v-btn>
             <v-btn
               variant="flat"
+              @click="importDataLocal(IMPORT_SCOPE.propertyMergeItems_PrioImport)"
+            >
+              Merge: Merge Items (Import > Pers)
+            </v-btn>
+            <v-btn
+              variant="flat"
+              @click="importDataLocal(IMPORT_SCOPE.propertyMergeItems_PrioPers)"
+            >
+              Merge: Merge Items (Pers > Import)
+            </v-btn>
+            <v-btn
+              variant="flat"
               @click="importDataLocal(IMPORT_SCOPE.mergeOnlyNewItems)"
             >
               Merge: Import Only new Items
             </v-btn>
             <v-btn
               variant="flat"
-              @click="importDataLocal(IMPORT_SCOPE.forceMergeItems)"
+              @click="importDataLocal(IMPORT_SCOPE.overrideExistingItems)"
             >
-              Merge: Import All Items
+              Merge: Override Existing Items
             </v-btn>
           </div>
         </v-card>
