@@ -8,12 +8,14 @@ const dialogStore = useDialogStore();
 const data = reactive({
   tab: "tagEditor"
 });
+
+function noop () {}
 </script>
 
 <template>
   <v-dialog
     v-model="dialogStore.settings.show"
-    min-width="350" 
+    min-width="350"
     max-width="1200"
     transition="dialog-top-transition"
   >
@@ -44,6 +46,7 @@ const data = reactive({
         <v-window
           v-model="data.tab"
           class="settingsWindow shrinking"
+          :touch="false"
         >
           <v-window-item value="tagEditor">
             <TagsEditor />
@@ -89,5 +92,13 @@ const data = reactive({
 
 .settingsEntryIcon {
   margin-right: 0.2em;
+}
+
+/* disable scrollbar during any transition on the items*/
+.settingsWindow:has(.v-window-item[class*='transition']) {
+  overflow: hidden;
+}
+.settingsWindow .v-window-item[class*='transition'] {
+  background-color: rgb(var(--v-theme-surface));
 }
 </style>

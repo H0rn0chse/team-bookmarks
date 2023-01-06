@@ -31,12 +31,13 @@ async function importDataLocal (scope) {
 
 async function exportDataLocal (scope) {
   switch (scope) {
-    case "personalizationOnly":
+    case "personalizedItems":
       console.log("starting export");
       await exportData();
       console.log("export done");
       break;
     case "allItems":
+    case "personalizedSearchItems":
     case "searchItems":
     default:
       console.error(`scope ${scope} is not implemented yet`);
@@ -122,23 +123,30 @@ function showAddItemDialog () {
           <div class="d-flex flex-column align-start">
             <v-btn
               variant="flat"
-              disabled
-              @click="exportDataLocal('searchItems')"
+              @click="exportDataLocal('personalizedItems')"
             >
-              Current Search
-            </v-btn>
-            <v-btn
-              variant="flat"
-              @click="exportDataLocal('personalizationOnly')"
-            >
-              Personalization Only
+              All Items (Personalization)
             </v-btn>
             <v-btn
               variant="flat"
               disabled
               @click="exportDataLocal('allItems')"
             >
-              All Items
+              All Items (Full Copy)
+            </v-btn>
+            <v-btn
+              variant="flat"
+              disabled
+              @click="exportDataLocal('personalizedSearchItems')"
+            >
+              Current Search (Personalization)
+            </v-btn>
+            <v-btn
+              variant="flat"
+              disabled
+              @click="exportDataLocal('searchItems')"
+            >
+              Current Search (Full Copy)
             </v-btn>
           </div>
         </v-card>

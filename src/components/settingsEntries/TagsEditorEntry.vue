@@ -220,7 +220,7 @@ function addNewTag () {
   display: grid;
   grid-template-columns: clamp(9em, 20%, 15em) auto;
   grid-template-rows: auto;
-  grid-template-areas: 
+  grid-template-areas:
     "tagList editSection";
 }
 
@@ -260,7 +260,9 @@ function addNewTag () {
 }
 
 .selectedTag {
-  border-color: black;
-  border-width: 3px;
+  border-color: black;}
+
+.tagListEntry:hover {
+  box-shadow: 2px 2px 2px rgba(0, 0, 0, 0.5);
 }
 </style>
