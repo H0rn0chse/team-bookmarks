@@ -21,9 +21,7 @@ export const useSearchStore = defineStore("search", () => {
   }]);
 
   const searchKeywords = computed(() => {
-    return mainStore.availableKeywords
-      // workaround until https://github.com/vuetifyjs/vuetify/issues/16226 is fixed
-      .filter(keyword => !searchTerms.value.includes(keyword));
+    return mainStore.availableKeywords;
   });
 
   const filteredItems = computed(() => {

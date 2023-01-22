@@ -19,9 +19,7 @@ const combobox = readonly({
 
 const keywordSuggestions = computed({
   get () {
-    return mainStore.availableKeywords
-      // workaround until https://github.com/vuetifyjs/vuetify/issues/16226 is fixed
-      .filter(keyword => !dialogStore.itemDetails.keywords.includes(keyword));
+    return mainStore.availableKeywords;
   }
 });
 const groups = computed(() => {
