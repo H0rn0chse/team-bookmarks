@@ -120,10 +120,29 @@ export const useDialogStore = defineStore("dialog", () => {
     hideAdd,
   };
 
+  // ================= Add =================
+  const importData = ref({
+    show: false,
+  });
+
+  function showImport () {
+    importData.value.show = true;
+  }
+  function hideImport () {
+    importData.value.show = false;
+  }
+
+  const importExpose = {
+    importData,
+    showImport,
+    hideImport,
+  };
+
   return {
     itemDetails,
     ...settingsExpose,
     ...editBookmarkExpose,
-    ...addBookmarkExpose
+    ...addBookmarkExpose,
+    ...importExpose,
   };
 });

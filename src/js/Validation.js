@@ -98,3 +98,48 @@ function isValidGroupProp (prop, value) {
       return true;
   }
 }
+
+export function TBoolean (options = {}) {
+  // defaults
+  if (!Object.hasOwn(options, "nullable")) {
+    options.nullable = false;
+  }
+
+  return function validate (value) {
+    if (options.nullable && value === null) {
+      return true;
+    }
+    return typeof value === "boolean";
+  };
+}
+
+export function TString (options = {}) {
+  // defaults
+  if (!Object.hasOwn(options, "nullable")) {
+    options.nullable = false;
+  }
+
+  return function validate (value) {
+    if (options.nullable && value === null) {
+      return true;
+    }
+    return typeof value === "string";
+  };
+}
+
+export function TArray (options = {}) {
+  // defaults
+  if (!Object.hasOwn(options, "nullable")) {
+    options.nullable = false;
+  }
+  if (!Object.hasOwn(options, "itemType")) {
+    options.itemType = TString();
+  }
+
+  return function validate (value) {
+    if (options.nullable && value === null) {
+      return true;
+    }
+    return typeof value === "string";
+  };
+}

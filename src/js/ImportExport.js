@@ -7,11 +7,15 @@ let _fileHandler;
 let currentImportScope = null;
 
 export const IMPORT_SCOPE = {
-  deleteOldPersAndImport: "deleteOldPersAndImport",
+  CleanImport: "CleanImport",
   mergeOnlyNewItems: "mergeOnlyNewItems",
-  propertyMergeItems_PrioImport: "propertyMergeItems_PrioImport",
-  propertyMergeItems_PrioPers: "propertyMergeItems_PrioPers",
-  overrideExistingItems: "overrideExistingItems"
+  MergeOnItemLevel: "MergeOnItemLevel",
+  MergeOnPropLevel: "MergeOnPropLevel"
+};
+
+export const MERGE_STRATEGY = {
+  PreferPers: "PreferPers",
+  PreferImport: "PreferImport"
 };
 
 export const EXPORT_SCOPE = {
@@ -28,6 +32,22 @@ export function importData (scope) {
   }
   _fileHandler.value = "";
   _fileHandler.click();
+}
+
+async function readFileAsText (file) {
+  const reader = new FileReader();
+  reader.readAsText(file);
+
+  return new Promise((resolve, reject) => {
+    reader.onload = () => {
+      const text = reader.result;
+      resolve(text);
+    };
+  
+    reader.onerror = () => {
+      reject(reader.error);
+    };
+  });
 }
 
 function _createLoadFile () {
@@ -66,15 +86,32 @@ function _handleFileSelect (event) {
   }
 }
 
+export async function importFile (file, importScope, mergeStrategy) {
+  const persText = await readFileAsText(file);
+  try {
+    const importedData = JSON.parse(persText);
+    // todo migrate
+    // todo validate
+    // todo check collisions
+    const personalizedData = await getImportData(importedData, importScope, mergeStrategy);
+
+    const mainStore = useMainStore();
+    mainStore.importData(personalizedData);
+    return;
+  } catch (err) {
+    return Promise.reject(err);
+  }
+}
+
 async function getImportData (importedData, scope) {
   let personalizedData;
   const mainStore = useMainStore();
   const originalData = await getOriginalData();
 
-  if (scope === IMPORT_SCOPE.deleteOldPersAndImport) {
+  if (scope === IMPORT_SCOPE.CleanImport) {
     personalizedData = await applyPers(originalData, importedData);
 
-  } else if (scope === IMPORT_SCOPE.propertyMergeItems_PrioImport) {
+  } else if (scope === IMPORT_SCOPE.MergeOnItemLevel) {
     personalizedData = mainStore.getExportData();
     personalizedData = await applyPers(personalizedData, importedData);
 
@@ -200,4 +237,19 @@ function download (content, fileName, contentType) {
   a.href = URL.createObjectURL(file);
   a.download = fileName;
   a.click();
+}
+
+export async function analyzeImportFile (file) {
+  const persText = await readFileAsText(file);
+  try {
+    const persData = JSON.parse(persText);
+    // todo migrate
+    // todo validate
+    // todo check collisions
+    return {
+      hasCollisions: true
+    };
+  } catch (err) {
+    return Promise.reject(err);
+  }
 }

@@ -52,6 +52,10 @@ function showAddItemDialog () {
   dialogStore.showAdd();
 }
 
+function showImportDialog () {
+  dialogStore.showImport();
+}
+
 </script>
 
 <template>
@@ -68,6 +72,7 @@ function showAddItemDialog () {
         id="importBtn"
         title="Import"
         class="sideItem"
+        @click="showImportDialog"
       >
         <vue-feather
           :size="icons.size"
@@ -75,7 +80,7 @@ function showAddItemDialog () {
         />
       </div>
       <v-menu
-        activator="#importBtn"
+        activator="#importBtn2"
         location="end"
       >
         <v-card class="optionsCard">

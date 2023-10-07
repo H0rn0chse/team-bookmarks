@@ -1,7 +1,11 @@
-import { diff } from "deep-object-diff";
+//import { diff } from "deep-object-diff";
+import { diff } from "just-diff";
 import { useMainStore } from "@/stores/main";
 import { clone, undefinedReplacer } from "@/js/utils";
 import { isValidEntityItem, isValidPersItem } from "@/js/Validation";
+import { diffApply } from "just-diff-apply";
+//import { diffJson } from "diff";
+//import { parsePatch } from "diff";
 
 const localStorageKey = "team-bookmarks-personalization";
 const trashKey = "team-bookmarks-trash";
@@ -52,7 +56,7 @@ async function getPersFromLocalStorage () {
   if (!pers) {
     return {
       version: "0.0.1",
-      diff: {}
+      diff: []
     };
   }
   return pers;
@@ -71,14 +75,23 @@ export async function getData () {
   return personalizedData;
 }
 
-export async function extractPers (originalData, personalizedData) {
+export async function savePers () {
+  const pers = await extractPers();
+  localStorage.setItem(localStorageKey, JSON.stringify(pers, undefinedReplacer));
+}
+
+export async function extractPers (originalData, personalizedData) { // used for export and savePers
   if (!originalData || !personalizedData) {
     const mainStore = useMainStore();
     personalizedData = mainStore.getExportData();
     originalData = await getDataFromRepo();
   }
 
+  //const pers = diff(originalData, personalizedData);
+  //const pers = diffJson(originalData, personalizedData, { undefinedReplacement: null });
+  //pers2 = parsePatch(pers);
   const pers = diff(originalData, personalizedData);
+  debugger;
   return {
     version: "0.0.1",
     diff: pers
@@ -91,17 +104,12 @@ export async function extractPers (originalData, personalizedData) {
  * @param {...object} pers A personalization object containing a diff
  * @returns {object}
  */
-export async function applyPers (originalData, ...pers) {
+export async function applyPers (originalData, ...pers) { // used for import only
   let personalizedData = originalData;
   pers.forEach(({ diff }) => {
     personalizedData = mixinPers(personalizedData, diff);
   });
   return personalizedData;
-}
-
-export async function savePers () {
-  const pers = await extractPers();
-  localStorage.setItem(localStorageKey, JSON.stringify(pers, undefinedReplacer));
 }
 
 /**
@@ -113,6 +121,10 @@ export async function savePers () {
  */
 function mixinPers (originalData, pers) {
   const data = clone(originalData);
+  debugger;
+  diffApply(data, pers);
+  debugger;
+  return data;
 
   // items, groups, ...
   Object.keys(data).forEach(entityKey => {
@@ -201,4 +213,105 @@ function addToTrash (entityKey, item) {
   }
   trash[entityKey].push(item);
   localStorage.setItem(trashKey, JSON.stringify(trash, undefinedReplacer));
+}
+
+export function mergePersonalizationOnEntityItemLevel (basePersData, newPersData) {
+  const basePers = new PersInterface(basePersData);
+  const newPers = new PersInterface(newPersData);
+  newPers.forEachEntityItem((entityItem) => {
+    basePers.setEntityItem(entityItem);
+  });
+}
+
+export function mergePersonalizationOnEntityItemPropertyLevel (basePersData, newPersData) {
+  const basePers = new PersInterface(basePersData);
+  const newPers = new PersInterface(newPersData);
+  newPers.forEachEntityItemProperty((entityItem) => {
+    basePers.setEntityItemProperty(entityItem);
+  });
+}
+
+class PersInterface {
+  #pers = null;
+  constructor (pers) {
+    this.#pers = clone(pers);
+  }
+
+  #getEntities () {
+    return Object.keys(this.#pers.diff).map((entityId) => {
+      return {
+        meta: {
+          entityId
+        },
+        value: this.#pers.diff[entityId]
+      };
+    });
+  }
+
+  #getEntityItems (entity) {
+    return Object.keys(entity.value).map((entityItemId) => {
+      return {
+        meta: {
+          entityItemId,
+          ...entity.meta
+        },
+        value: entity.value[entityItemId]
+      };
+    });
+  }
+
+  #getEntityItemProperties (entityItem) {
+    return Object.keys(entityItem.value).map((itemPropertyId) => {
+      return {
+        meta: {
+          itemPropertyId,
+          ...entityItem.meta
+        },
+        value: entityItem.value[itemPropertyId]
+      };
+    });
+  }
+
+  setEntityItem (entityItem) {
+    const entityId = entityItem.meta.entityId;
+    const itemId = entityItem.meta.entityItemId;
+    const root = this.#pers.diff;
+
+    if (!root[entityId]) {
+      root[entityId] = {};
+    }
+    const entity = root[entityId];
+    entity[itemId] = entityItem.value;
+  }
+  
+  forEachEntityItem (callback) {
+    this.#getEntities().forEach((entity) => {
+      this.#getEntityItems(entity).forEach((entityItem) => {
+        callback(entityItem);
+      });
+    });
+  }
+
+  setEntityItemProperty () {}
+
+  forEachEntityItemProperty (callback) {
+    this.forEachEntityItem((entityItem) => {
+      this.#getEntityItemProperties(entityItem).forEach((entityItemProperty) => {
+        callback(entityItemProperty);
+      });
+    });
+  }
+
+  hasEntityItem (searchItem) {
+    let found = false;
+    this.forEachEntityItem((entityItem) => {
+      if (found) {
+        return;
+      }
+      const entityMatch = searchItem.entityId === entityItem.entityId;
+      const itemMatch = searchItem.entityItemId === entityItem.entityItemId;
+      found = entityMatch && itemMatch;
+    });
+    return found;
+  }
 }

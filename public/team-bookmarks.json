@@ -8,7 +8,7 @@
             "title": "Item No. 000",
             "src": "https://sap.com",
             "description": "description",
-            "keywords": ["a"]
+            "keywords": {"a": "a"}
         },
         "1": {
             "id": "1",

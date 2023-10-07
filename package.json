@@ -12,21 +12,24 @@
   "dependencies": {
     "@mdi/font": "^7.1.96",
     "deep-object-diff": "^1.1.9",
+    "diff": "^5.1.0",
     "feather-icons": "^4.29.0",
     "github-corner-element": "^1.0.1",
+    "just-diff": "^6.0.2",
+    "just-diff-apply": "^5.5.0",
     "pinia": "^2.0.28",
     "roboto-fontface": "^0.10.0",
     "uuid": "^9.0.0",
     "vue": "^3.2.45",
     "vue-feather": "^2.0.0",
-    "vuetify": "^3.1.2",
+    "vuetify": "^3.2.4",
     "webfontloader": "^1.6.28"
   },
   "devDependencies": {
     "@vitejs/plugin-vue": "^4.0.0",
     "eslint": "^8.30.0",
     "eslint-plugin-vue": "^9.8.0",
-    "vite": "^4.0.3",
+    "vite": "^4.3.5",
     "vite-plugin-vuetify": "^1.0.1"
   }
 }
