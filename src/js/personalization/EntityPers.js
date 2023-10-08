@@ -13,7 +13,7 @@ const MINIFY_SCHEMA = {
   version: "v",
   items: {
     key: "i",
-    items: {
+    schema: {
       persType: "t",
       entityDiff: "d",
     }
@@ -22,22 +22,24 @@ const MINIFY_SCHEMA = {
 
 export class EntityPers extends PersBase {
   static #minifyPers (pers) {
-    return Object.keys(pers).reduce((minifiedPers, key) => {
-      if (MINIFY_SCHEMA[key]) {
-        const entry = MINIFY_SCHEMA[key];
-        if (typeof entry === "string") {
-          minifiedPers[entry] = pers[key];
+    function applySchema (schema = {}, pers = {}) {
+      return Object.keys(pers).reduce((minifiedPers, key) => {
+        if (schema[key]) {
+          const entry = schema[key];
+          if (typeof entry === "string") {
+            minifiedPers[entry] = pers[key];
+          } else {
+            minifiedPers[entry.key] = applySchema(entry.schema, pers[key]);
+          }
         } else {
-          minifiedPers[entry.key] = pers[key];
+          minifiedPers[key] = pers[key];
         }
-      } else {
-        minifiedPers[key] = pers[key];
-      }
-      return minifiedPers;
-    }, {});
-    const minifiedPers = {};
-    minifiedPers[PERS_KEYS.version] = pers.version;
-    minifiedPers[PERS_KEYS.items] = pers.items;
+
+        return minifiedPers;
+      }, {});
+    }
+
+    return applySchema(MINIFY_SCHEMA, pers);
   }
 
   static #expandPers () {
