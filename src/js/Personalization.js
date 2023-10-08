@@ -4,6 +4,7 @@ import { useMainStore } from "@/stores/main";
 import { clone, undefinedReplacer } from "@/js/utils";
 import { isValidEntityItem, isValidPersItem } from "@/js/Validation";
 import { diffApply } from "just-diff-apply";
+import { PersonalizationProcessor } from "./personalization/PersonalizationProcessor.js";
 //import { diffJson } from "diff";
 //import { parsePatch } from "diff";
 
@@ -54,10 +55,11 @@ export function isOriginalGroup (groupId) {
 async function getPersFromLocalStorage () {
   const pers = JSON.parse(localStorage.getItem(localStorageKey));
   if (!pers) {
-    return {
-      version: "0.0.1",
-      diff: []
-    };
+    return PersonalizationProcessor.getEmptyPers();
+    // return {
+    //   version: "0.0.1",
+    //   diff: []
+    // };
   }
   return pers;
 }
@@ -71,7 +73,7 @@ export async function getData () {
   const pers = await getPersFromLocalStorage();
 
   // We could add a migration step here based on pers.version
-  const personalizedData = mixinPers(originalData, pers.diff);
+  const personalizedData = mixinPers(originalData, pers);
   return personalizedData;
 }
 
@@ -90,12 +92,13 @@ export async function extractPers (originalData, personalizedData) { // used for
   //const pers = diff(originalData, personalizedData);
   //const pers = diffJson(originalData, personalizedData, { undefinedReplacement: null });
   //pers2 = parsePatch(pers);
-  const pers = diff(originalData, personalizedData);
-  debugger;
-  return {
-    version: "0.0.1",
-    diff: pers
-  };
+  // const pers = diff(originalData, personalizedData);
+  // debugger;
+  // return {
+  //   version: "0.0.1",
+  //   diff: pers
+  // };
+  return PersonalizationProcessor.extractPers(originalData, personalizedData);
 }
 
 /**
@@ -110,6 +113,7 @@ export async function applyPers (originalData, ...pers) { // used for import onl
     personalizedData = mixinPers(personalizedData, diff);
   });
   return personalizedData;
+  return PersonalizationProcessor.applyPers(originalData, personalizedData);
 }
 
 /**
@@ -120,48 +124,49 @@ export async function applyPers (originalData, ...pers) { // used for import onl
  * @returns {object} The personalized data
  */
 function mixinPers (originalData, pers) {
-  const data = clone(originalData);
-  debugger;
-  diffApply(data, pers);
-  debugger;
-  return data;
+  return PersonalizationProcessor.applyPers(originalData, pers);
+  // const data = clone(originalData);
+  // debugger;
+  // diffApply(data, pers);
+  // debugger;
+  // return data;
 
-  // items, groups, ...
-  Object.keys(data).forEach(entityKey => {
-    const entityData = data[entityKey];
-    const persEntity = pers[entityKey];
+  // // items, groups, ...
+  // Object.keys(data).forEach(entityKey => {
+  //   const entityData = data[entityKey];
+  //   const persEntity = pers[entityKey];
 
-    // personalization does not adhere to the content structure
-    if (!persEntity) {
-      return;
-    }
+  //   // personalization does not adhere to the content structure
+  //   if (!persEntity) {
+  //     return;
+  //   }
 
-    // item and group props
-    Object.keys(persEntity).forEach(itemId => {
-      // Add non-existing items
-      if (!entityData[itemId]) {
-        if (isValidEntityItem(entityKey, persEntity[itemId])) {
-          entityData[itemId] = persEntity[itemId];
-        } else {
-          addToTrash(entityKey, persEntity[itemId]);
-          console.error(`Validation: ${entityKey} item ${itemId} is invalid and got removed from personalization`);
-        }
-        return;
-      }
+  //   // item and group props
+  //   Object.keys(persEntity).forEach(itemId => {
+  //     // Add non-existing items
+  //     if (!entityData[itemId]) {
+  //       if (isValidEntityItem(entityKey, persEntity[itemId])) {
+  //         entityData[itemId] = persEntity[itemId];
+  //       } else {
+  //         addToTrash(entityKey, persEntity[itemId]);
+  //         console.error(`Validation: ${entityKey} item ${itemId} is invalid and got removed from personalization`);
+  //       }
+  //       return;
+  //     }
 
 
-      if (isValidPersItem(entityKey, persEntity[itemId])) {
-        // Update existing items
-        entityData[itemId] = mergeProps(entityData[itemId], persEntity[itemId]);
-      } else {
-        addToTrash(entityKey, persEntity[itemId]);
-        console.error(`Validation: Removed invalid personalization for ${entityKey} item ${itemId}`);
-      }
-    });
-  });
-  // remove assignments to non-existing groups
-  sanitizeGroupAssignments(data);
-  return data;
+  //     if (isValidPersItem(entityKey, persEntity[itemId])) {
+  //       // Update existing items
+  //       entityData[itemId] = mergeProps(entityData[itemId], persEntity[itemId]);
+  //     } else {
+  //       addToTrash(entityKey, persEntity[itemId]);
+  //       console.error(`Validation: Removed invalid personalization for ${entityKey} item ${itemId}`);
+  //     }
+  //   });
+  // });
+  // // remove assignments to non-existing groups
+  // sanitizeGroupAssignments(data);
+  // return data;
 }
 
 /**
@@ -283,7 +288,7 @@ class PersInterface {
     const entity = root[entityId];
     entity[itemId] = entityItem.value;
   }
-  
+
   forEachEntityItem (callback) {
     this.#getEntities().forEach((entity) => {
       this.#getEntityItems(entity).forEach((entityItem) => {

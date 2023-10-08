@@ -1,41 +1,76 @@
-import { Base } from "./Base";
-import { ItemEntity } from "./ItemEntity";
+import { MIX_LEVEL, PersBase } from "./PersBase";
+import { Schema } from "./Schema.js";
+import { TArray, TBoolean, TColor, TString } from "./Types.js";
+import { EntityPers } from "./EntityPers.js";
 
-export class PersonalizationProcessor extends Base {
+const itemSchema = new Schema({
+  "id": TString({ default: "" }),
+  "hidden": TBoolean({ default: false }),
+  "favorite": TBoolean({ default: false }),
+  "group": TString({ default: null, nullable: true }),
+  "title": TString({ default: "" }),
+  "src": TString({ default: "" }),
+  "description": TString({ default: "" }),
+  "keywords": TArray({ default: [], itemType: TString({ default: "" }) }),
+}, "id");
+
+const groupSchema = new Schema({
+  "id": TString({ default: "" }),
+  "title": TString({ default: "" }),
+  "color": TColor({ default: "#000000" }),
+  "background": TColor({ default: "#FFFFFF" }),
+}, "id");
+
+const persVersion = "1.0.0";
+
+export class PersonalizationProcessor extends PersBase {
   static extractPers (originalData, personalizedData) {
     return {
-      data: {
-        items: ItemEntity.extractPers(originalData.items, personalizedData.items),
-        groups: [], // TODO: GroupEntity.extractPers
+      v: persVersion,
+      d: {
+        items: EntityPers.extractPers(itemSchema, originalData.items, personalizedData.items),
+        groups: EntityPers.extractPers(groupSchema, originalData.groups, personalizedData.groups),
       },
-      version: "0.0.1"
     };
   }
 
   static applyPers (originalData, personalization) {
+    if (personalization.v !== persVersion) {
+      console.error("Could not apply personalization");
+      return originalData;
+    }
+
     const personalizedData = {
-      items: ItemEntity.applyPers(originalData.items, personalization.data?.items),
-      groups: [] // TODO: GroupEntity.applyPers
+      items: EntityPers.applyPers(itemSchema, originalData.items, personalization.d?.items),
+      groups: EntityPers.applyPers(groupSchema, originalData.groups, personalization.d?.groups),
     };
     this.#sanitizeGroupAssignments(personalizedData);
+    return personalizedData;
   }
 
-  static mixPers (personalization1, personalization2, mixLevel = this.mixLevel.Item) {
+  static mixPers (personalization1, personalization2, mixLevel = MIX_LEVEL.Item) {
+    // personalization1 has prio
+
+    if (personalization1.v !== persVersion || personalization2.v !== persVersion) {
+      console.error("Could not mix personalization");
+      return this.getEmptyPers();
+    }
+
     return {
-      data: {
-        items: ItemEntity.mix(personalization1.data?.items, personalization2.data?.items, mixLevel),
-        groups: [], // TODO: GroupEntity.mix
+      d: {
+        items: EntityPers.mix(itemSchema, personalization1.d?.items, personalization2.d?.items, mixLevel),
+        groups: EntityPers.mix(groupSchema, personalization1.d?.groups, personalization2.d?.groups, mixLevel),
       },
-      version: "0.0.1"
+      v: persVersion
     };
   }
 
   static getEmptyPers () {
     return {
-      version: "0.0.1",
-      data: {
-        items: ItemEntity.getEmptyPers(),
-        groups: [], // TODO: GroupEntity.getEmptyPers
+      v: persVersion,
+      d: {
+        items: EntityPers.getEmptyPers(),
+        groups: EntityPers.getEmptyPers(),
       },
     };
   }
