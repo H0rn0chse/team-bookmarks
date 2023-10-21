@@ -78,7 +78,10 @@ const favorite = computed(() => {
     class="item"
     :style="containerStyles"
   >
-    <div class="itemContainer flexContainer">
+    <div
+      class="itemContainer flexContainer"
+      @click="emit('moreClick')"
+    >
       <div class="start shrinking flexContainer">
         <a
           class="link shrinking flexContainer"
