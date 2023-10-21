@@ -120,7 +120,7 @@ export const useDialogStore = defineStore("dialog", () => {
     hideAdd,
   };
 
-  // ================= Add =================
+  // ================= Import =================
   const importData = ref({
     show: false,
   });
@@ -138,11 +138,31 @@ export const useDialogStore = defineStore("dialog", () => {
     hideImport,
   };
 
+  // ================= Export =================
+  const exportData = ref({
+    show: false,
+  });
+
+  function showExport () {
+    exportData.value.show = true;
+  }
+  function hideExport () {
+    exportData.value.show = false;
+  }
+
+  const exportExpose = {
+    exportData,
+    showExport,
+    hideExport,
+  };
+
+
   return {
     itemDetails,
     ...settingsExpose,
     ...editBookmarkExpose,
     ...addBookmarkExpose,
     ...importExpose,
+    ...exportExpose,
   };
 });

@@ -5,6 +5,7 @@ import SideBar from "@/components/SideBar.vue";
 import MainContent from "@/components/MainContent.vue";
 import SettingsDialog from "@/components/dialogs/SettingsDialog.vue";
 import ImportDialog from "@/components/dialogs/ImportDialog.vue";
+import ExportDialog from "@/components/dialogs/ExportDialog.vue";
 import EditItemDialog from "@/components/dialogs/EditItemDialog.vue";
 import AddItemDialog from "@/components/dialogs/AddItemDialog.vue";
 import ConfirmDialog from "@/components/dialogs/ConfirmDialog.vue";
@@ -35,6 +36,7 @@ provide("showError", (message) => {
       </div>
       <SettingsDialog />
       <ImportDialog />
+      <ExportDialog />
       <EditItemDialog />
       <AddItemDialog />
       <ConfirmDialog ref="confirm" />
