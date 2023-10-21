@@ -3,6 +3,11 @@ import { Schema } from "./Schema.js";
 import { TArray, TBoolean, TColor, TString } from "./Types.js";
 import { EntityPers } from "./EntityPers.js";
 
+export const ENTITY_KEY = {
+  Item: "Item",
+  Group: "Group",
+};
+
 const itemSchema = new Schema({
   "id": TString({ default: "" }),
   "hidden": TBoolean({ default: false }),
@@ -95,12 +100,13 @@ export class PersonalizationProcessor extends PersBase {
   }
 }
 
-/*
-originalData + personalizedData => extract pers
-  => diff?
-originalData + personalization => apply pers
-+ validation? => addToTash
-pers1 + pers2 => combine on entity item level
-pers1 + pers2 => combine on entity item prop level
-
-*/
+export function isValidEntity (entityKey, entity) {
+  switch (entityKey) {
+    case ENTITY_KEY.Item:
+      return itemSchema.isValidEntity(entity);
+    case ENTITY_KEY.Group:
+      return groupSchema.isValidEntity(entity);
+    default:
+      throw new Error("Unsupported entityKey");
+  }
+}

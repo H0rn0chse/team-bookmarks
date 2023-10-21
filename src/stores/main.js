@@ -2,8 +2,8 @@ import { inject } from "vue";
 import { defineStore } from "pinia";
 import { v4 as uuidV4 } from "uuid";
 import { clone } from "@/js/utils";
-import { isValidEntityItem, isValidPersItem } from "@/js/Validation";
 import { savePers } from "@/js/Personalization";
+import { ENTITY_KEY, isValidEntity } from "@/js/personalization/PersonalizationProcessor.js";
 
 export const useMainStore = defineStore("main", {
   state () {
@@ -120,7 +120,7 @@ export const useMainStore = defineStore("main", {
 
       newItem.id = newId;
 
-      if (!isValidEntityItem("items", newItem)) {
+      if (!isValidEntity(ENTITY_KEY.Item, newItem)) {
         console.error("Late validation failed unexpectedly");
         this.showError("Bookmark could not be added");
       }
@@ -143,7 +143,7 @@ export const useMainStore = defineStore("main", {
       this.saveData();
     },
     updateItem (itemId, props) {
-      if (!isValidPersItem("items", props)) {
+      if (!isValidEntity(ENTITY_KEY.Item, props)) {
         console.error("Late validation failed unexpectedly");
         this.showError("Bookmark could not be updated");
       }
@@ -170,7 +170,7 @@ export const useMainStore = defineStore("main", {
 
       newGroup.id = newId;
 
-      if (!isValidEntityItem("groups", newGroup)) {
+      if (!isValidEntity(ENTITY_KEY.Group, newGroup)) {
         console.error("Late validation failed unexpectedly");
         this.showError("Group could not be added");
       }
@@ -194,7 +194,7 @@ export const useMainStore = defineStore("main", {
       this.saveData();
     },
     updateGroup (groupId, props) {
-      if (!isValidPersItem("groups", props)) {
+      if (!isValidEntity(ENTITY_KEY.Group, props)) {
         console.error("Late validation failed unexpectedly");
         this.showError("Group could not be updated");
       }
