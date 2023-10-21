@@ -1,17 +1,20 @@
 import { useMainStore } from "@/stores/main";
 import { useSearchStore } from "@/stores/search";
-import { applyPers, extractPers, getOriginalData } from "@/js/Personalization";
+import { applyPers, extractPers, getOriginalData, hasCollisionsWithCurrentPersonalization, mixPersOnItemLevel, mixPersOnPropertyLevel, validatePersonalization } from "@/js/Personalization";
 import { undefinedReplacer } from "@/js/utils";
 
 let _fileHandler;
 let currentImportScope = null;
 
 export const IMPORT_SCOPE = {
-  deleteOldPersAndImport: "deleteOldPersAndImport",
-  mergeOnlyNewItems: "mergeOnlyNewItems",
-  propertyMergeItems_PrioImport: "propertyMergeItems_PrioImport",
-  propertyMergeItems_PrioPers: "propertyMergeItems_PrioPers",
-  overrideExistingItems: "overrideExistingItems"
+  CleanImport: "CleanImport",
+  MergeOnItemLevel: "MergeOnItemLevel",
+  MergeOnPropLevel: "MergeOnPropLevel"
+};
+
+export const MERGE_STRATEGY = {
+  PreferPers: "PreferPers",
+  PreferImport: "PreferImport"
 };
 
 export const EXPORT_SCOPE = {
@@ -28,6 +31,22 @@ export function importData (scope) {
   }
   _fileHandler.value = "";
   _fileHandler.click();
+}
+
+async function readFileAsText (file) {
+  const reader = new FileReader();
+  reader.readAsText(file);
+
+  return new Promise((resolve, reject) => {
+    reader.onload = () => {
+      const text = reader.result;
+      resolve(text);
+    };
+
+    reader.onerror = () => {
+      reject(reader.error);
+    };
+  });
 }
 
 function _createLoadFile () {
@@ -66,64 +85,57 @@ function _handleFileSelect (event) {
   }
 }
 
-async function getImportData (importedData, scope) {
+export async function importFile (file, importScope, mergeStrategy) {
+  const persText = await readFileAsText(file);
+  try {
+    const importedData = JSON.parse(persText);
+    // validation already happened in pre import
+    // todo migrate
+    const personalizedData = await getImportData(importedData, importScope, mergeStrategy);
+
+    const mainStore = useMainStore();
+    mainStore.importData(personalizedData);
+    return;
+  } catch (err) {
+    return Promise.reject(err);
+  }
+}
+
+async function getImportData (importedData, scope, strategy) {
   let personalizedData;
-  const mainStore = useMainStore();
   const originalData = await getOriginalData();
+  const currentPers = await extractPers();
+  let importedPers;
 
-  if (scope === IMPORT_SCOPE.deleteOldPersAndImport) {
+  if (scope === IMPORT_SCOPE.CleanImport) {
     personalizedData = await applyPers(originalData, importedData);
+    return personalizedData;
 
-  } else if (scope === IMPORT_SCOPE.propertyMergeItems_PrioImport) {
-    personalizedData = mainStore.getExportData();
-    personalizedData = await applyPers(personalizedData, importedData);
+  } else if (scope === IMPORT_SCOPE.MergeOnItemLevel) {
+    if (strategy === MERGE_STRATEGY.PreferImport) {
+      importedPers = mixPersOnItemLevel(importedData, currentPers);
 
-  } else if (scope === IMPORT_SCOPE.propertyMergeItems_PrioPers) {
-    const currentPers = await extractPers();
-    personalizedData = await applyPers(originalData, importedData, currentPers);
+    } else if (strategy === MERGE_STRATEGY.PreferPers) {
+      importedPers = mixPersOnItemLevel(currentPers, importedData);
 
-  } else if (scope === IMPORT_SCOPE.mergeOnlyNewItems) {
-    personalizedData = mainStore.getExportData();
-    const currentPers = await extractPers();
-    // filter importedData based on current personalization diff
-    if (importedData.diff.items) {
-      Object.keys(importedData.diff.items).forEach((itemId) => {
-        if (currentPers.diff?.items?.[itemId]) {
-          delete importedData.diff.items[itemId];
-        }
-      });
+    } else {
+      throw new Error("Unexpected Error");
     }
-    if (importedData.diff.groups) {
-      Object.keys(importedData.diff.groups).forEach((groupId) => {
-        if (currentPers.diff?.groups?.[groupId]) {
-          delete importedData.diff.groups[groupId];
-        }
-      });
-    }
-    personalizedData = await applyPers(personalizedData, importedData);
+  } else if (scope === IMPORT_SCOPE.MergeOnPropLevel) {
+    if (strategy === MERGE_STRATEGY.PreferImport) {
+      importedPers = mixPersOnPropertyLevel(importedData, currentPers);
 
-  } else if (scope === IMPORT_SCOPE.overrideExistingItems) {
-    const currentPers = await extractPers();
-    // remove existing personalization for imported items
-    if (currentPers.diff.items) {
-      Object.keys(currentPers.diff.items).forEach((itemId) => {
-        if (importedData.diff?.items?.[itemId]) {
-          delete currentPers.diff.items[itemId];
-        }
-      });
-    }
-    if (currentPers.diff.groups) {
-      Object.keys(importedData.diff.groups).forEach((groupId) => {
-        if (importedData.diff?.groups?.[groupId]) {
-          delete currentPers.diff.groups[groupId];
-        }
-      });
-    }
-    personalizedData = await applyPers(originalData, currentPers, importedData);
+    } else if (strategy === MERGE_STRATEGY.PreferPers) {
+      importedPers = mixPersOnPropertyLevel(currentPers, importedData);
 
+    } else {
+      throw new Error("Unexpected Error");
+    }
   } else {
     throw new Error("Unsupported Import Scope");
   }
+
+  personalizedData = await applyPers(originalData, importedPers);
 
   return personalizedData;
 }
@@ -200,4 +212,23 @@ function download (content, fileName, contentType) {
   a.href = URL.createObjectURL(file);
   a.download = fileName;
   a.click();
+}
+
+export async function analyzeImportFile (file) {
+  const persText = await readFileAsText(file);
+  try {
+    const persData = JSON.parse(persText);
+    // todo migrate
+    if (!validatePersonalization(persData)) {
+      throw new Error("Invalid personalization!");
+    }
+
+    const hasCollisions = await hasCollisionsWithCurrentPersonalization(persData);
+
+    return {
+      hasCollisions
+    };
+  } catch (err) {
+    return Promise.reject(err);
+  }
 }

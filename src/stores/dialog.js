@@ -120,10 +120,49 @@ export const useDialogStore = defineStore("dialog", () => {
     hideAdd,
   };
 
+  // ================= Import =================
+  const importData = ref({
+    show: false,
+  });
+
+  function showImport () {
+    importData.value.show = true;
+  }
+  function hideImport () {
+    importData.value.show = false;
+  }
+
+  const importExpose = {
+    importData,
+    showImport,
+    hideImport,
+  };
+
+  // ================= Export =================
+  const exportData = ref({
+    show: false,
+  });
+
+  function showExport () {
+    exportData.value.show = true;
+  }
+  function hideExport () {
+    exportData.value.show = false;
+  }
+
+  const exportExpose = {
+    exportData,
+    showExport,
+    hideExport,
+  };
+
+
   return {
     itemDetails,
     ...settingsExpose,
     ...editBookmarkExpose,
-    ...addBookmarkExpose
+    ...addBookmarkExpose,
+    ...importExpose,
+    ...exportExpose,
   };
 });
