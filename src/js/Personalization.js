@@ -5,6 +5,7 @@ import { clone, undefinedReplacer } from "@/js/utils";
 import { isValidEntityItem, isValidPersItem } from "@/js/Validation";
 import { diffApply } from "just-diff-apply";
 import { PersonalizationProcessor } from "./personalization/PersonalizationProcessor.js";
+import { compressToUTF16, decompressFromUTF16 } from "async-lz-string";
 //import { diffJson } from "diff";
 //import { parsePatch } from "diff";
 
@@ -52,16 +53,38 @@ export function isOriginalGroup (groupId) {
   return !!cachedResult?.groups?.[groupId];
 }
 
+function isDebugMode () {
+  return !!localStorage.getItem("debugMode");
+}
+
+async function getCompressedItemFromLocalStorage (key) {
+  const compressedString = localStorage.getItem(key);
+  const decompressedString = await decompressFromUTF16(compressedString);
+  return decompressedString;
+}
+
+async function setCompressedItemToLocalStorage (key, string) {
+  const compressedString = await compressToUTF16(string);
+  localStorage.setItem(key, compressedString);
+  if (isDebugMode()) {
+    localStorage.setItem(`${key}-debug`, string);
+  }
+}
+
 async function getPersFromLocalStorage () {
-  const pers = JSON.parse(localStorage.getItem(localStorageKey));
-  if (!pers) {
+  const pers = await getCompressedItemFromLocalStorage(localStorageKey);
+  let parsedPers;
+  try {
+    parsedPers = JSON.parse(pers);
+  } catch (err) { /* */ }
+  if (!parsedPers) {
     return PersonalizationProcessor.getEmptyPers();
     // return {
     //   version: "0.0.1",
     //   diff: []
     // };
   }
-  return pers;
+  return parsedPers;
 }
 
 /**
@@ -79,7 +102,7 @@ export async function getData () {
 
 export async function savePers () {
   const pers = await extractPers();
-  localStorage.setItem(localStorageKey, JSON.stringify(pers, undefinedReplacer));
+  await setCompressedItemToLocalStorage(localStorageKey, JSON.stringify(pers, undefinedReplacer));
 }
 
 export async function extractPers (originalData, personalizedData) { // used for export and savePers

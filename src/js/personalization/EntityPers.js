@@ -9,43 +9,7 @@ export const PERS_TYPES = {
 
 const persVersion = "1.0.0";
 
-const MINIFY_SCHEMA = {
-  version: "v",
-  items: {
-    key: "i",
-    schema: {
-      persType: "t",
-      entityDiff: "d",
-    }
-  },
-};
-
 export class EntityPers extends PersBase {
-  static #minifyPers (pers) {
-    function applySchema (schema = {}, pers = {}) {
-      return Object.keys(pers).reduce((minifiedPers, key) => {
-        if (schema[key]) {
-          const entry = schema[key];
-          if (typeof entry === "string") {
-            minifiedPers[entry] = pers[key];
-          } else {
-            minifiedPers[entry.key] = applySchema(entry.schema, pers[key]);
-          }
-        } else {
-          minifiedPers[key] = pers[key];
-        }
-
-        return minifiedPers;
-      }, {});
-    }
-
-    return applySchema(MINIFY_SCHEMA, pers);
-  }
-
-  static #expandPers () {
-
-  }
-
   static extractPers (schema, originalEntities = {}, personalizedEntities = {}) {
     const persItems = [];
     Object.values(personalizedEntities).forEach((persEntity) => {
@@ -142,8 +106,8 @@ export class EntityPers extends PersBase {
       }, {});
 
       return {
-        v: persVersion,
-        d: [
+        version: persVersion,
+        items: [
           ...persItems1,
           ...persItems2.filter((persItem) => {
             const entityId = persItem.entityDiff.id;

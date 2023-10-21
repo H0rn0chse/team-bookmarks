@@ -26,8 +26,8 @@ const persVersion = "1.0.0";
 export class PersonalizationProcessor extends PersBase {
   static extractPers (originalData, personalizedData) {
     return {
-      v: persVersion,
-      d: {
+      version: persVersion,
+      entities: {
         items: EntityPers.extractPers(itemSchema, originalData.items, personalizedData.items),
         groups: EntityPers.extractPers(groupSchema, originalData.groups, personalizedData.groups),
       },
@@ -35,14 +35,16 @@ export class PersonalizationProcessor extends PersBase {
   }
 
   static applyPers (originalData, personalization) {
-    if (personalization.v !== persVersion) {
+    if (personalization.version !== persVersion) {
       console.error("Could not apply personalization");
       return originalData;
     }
 
+    const { items, groups } = personalization.entities || {};
+
     const personalizedData = {
-      items: EntityPers.applyPers(itemSchema, originalData.items, personalization.d?.items),
-      groups: EntityPers.applyPers(groupSchema, originalData.groups, personalization.d?.groups),
+      items: EntityPers.applyPers(itemSchema, originalData.items, items),
+      groups: EntityPers.applyPers(groupSchema, originalData.groups, groups),
     };
     this.#sanitizeGroupAssignments(personalizedData);
     return personalizedData;
@@ -51,24 +53,27 @@ export class PersonalizationProcessor extends PersBase {
   static mixPers (personalization1, personalization2, mixLevel = MIX_LEVEL.Item) {
     // personalization1 has prio
 
-    if (personalization1.v !== persVersion || personalization2.v !== persVersion) {
+    if (personalization1.version !== persVersion || personalization2.version !== persVersion) {
       console.error("Could not mix personalization");
       return this.getEmptyPers();
     }
 
+    const { items: items1, groups: groups1 } = personalization1.entities || {};
+    const { items: items2, groups: groups2 } = personalization2.entities || {};
+
     return {
-      d: {
-        items: EntityPers.mix(itemSchema, personalization1.d?.items, personalization2.d?.items, mixLevel),
-        groups: EntityPers.mix(groupSchema, personalization1.d?.groups, personalization2.d?.groups, mixLevel),
+      entities: {
+        items: EntityPers.mix(itemSchema, items1, items2, mixLevel),
+        groups: EntityPers.mix(groupSchema, groups1, groups2, mixLevel),
       },
-      v: persVersion
+      version: persVersion
     };
   }
 
   static getEmptyPers () {
     return {
-      v: persVersion,
-      d: {
+      version: persVersion,
+      entities: {
         items: EntityPers.getEmptyPers(),
         groups: EntityPers.getEmptyPers(),
       },
