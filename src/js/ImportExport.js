@@ -1,6 +1,6 @@
 import { useMainStore } from "@/stores/main";
 import { useSearchStore } from "@/stores/search";
-import { applyPers, extractPers, getOriginalData } from "@/js/Personalization";
+import { applyPers, extractPers, getOriginalData, hasCollisionsWithCurrentPersonalization, validatePersonalization } from "@/js/Personalization";
 import { undefinedReplacer } from "@/js/utils";
 
 let _fileHandler;
@@ -43,7 +43,7 @@ async function readFileAsText (file) {
       const text = reader.result;
       resolve(text);
     };
-  
+
     reader.onerror = () => {
       reject(reader.error);
     };
@@ -244,10 +244,14 @@ export async function analyzeImportFile (file) {
   try {
     const persData = JSON.parse(persText);
     // todo migrate
-    // todo validate
-    // todo check collisions
+    if (!validatePersonalization(persData)) {
+      throw new Error("Invalid personalization!");
+    }
+
+    const hasCollisions = await hasCollisionsWithCurrentPersonalization(persData);
+
     return {
-      hasCollisions: true
+      hasCollisions
     };
   } catch (err) {
     return Promise.reject(err);

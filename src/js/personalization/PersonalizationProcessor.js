@@ -2,6 +2,7 @@ import { MIX_LEVEL, PersBase } from "./PersBase";
 import { Schema } from "./Schema.js";
 import { TArray, TBoolean, TColor, TString } from "./Types.js";
 import { EntityPers } from "./EntityPers.js";
+import { LocalStorage } from "../LocalStorage.js";
 
 export const ENTITY_KEY = {
   Item: "Item",
@@ -26,12 +27,12 @@ const groupSchema = new Schema({
   "background": TColor({ default: "#FFFFFF" }),
 }, "id");
 
-const persVersion = "1.0.0";
+const latestVersion = "1.0.0";
 
 export class PersonalizationProcessor extends PersBase {
   static extractPers (originalData, personalizedData) {
     return {
-      version: persVersion,
+      version: latestVersion,
       entities: {
         items: EntityPers.extractPers(itemSchema, originalData.items, personalizedData.items),
         groups: EntityPers.extractPers(groupSchema, originalData.groups, personalizedData.groups),
@@ -40,12 +41,12 @@ export class PersonalizationProcessor extends PersBase {
   }
 
   static applyPers (originalData, personalization) {
-    if (personalization.version !== persVersion) {
+    if (!this.validate(personalization)) {
       console.error("Could not apply personalization");
       return originalData;
     }
 
-    const { items, groups } = personalization.entities || {};
+    const { items, groups } = personalization.entities;
 
     const personalizedData = {
       items: EntityPers.applyPers(itemSchema, originalData.items, items),
@@ -57,27 +58,26 @@ export class PersonalizationProcessor extends PersBase {
 
   static mixPers (personalization1, personalization2, mixLevel = MIX_LEVEL.Item) {
     // personalization1 has prio
-
-    if (personalization1.version !== persVersion || personalization2.version !== persVersion) {
+    if (!this.validate(personalization1) || !this.validate(personalization2)) {
       console.error("Could not mix personalization");
       return this.getEmptyPers();
     }
 
-    const { items: items1, groups: groups1 } = personalization1.entities || {};
-    const { items: items2, groups: groups2 } = personalization2.entities || {};
+    const { items: items1, groups: groups1 } = personalization1.entities;
+    const { items: items2, groups: groups2 } = personalization2.entities;
 
     return {
       entities: {
         items: EntityPers.mix(itemSchema, items1, items2, mixLevel),
         groups: EntityPers.mix(groupSchema, groups1, groups2, mixLevel),
       },
-      version: persVersion
+      version: latestVersion
     };
   }
 
   static getEmptyPers () {
     return {
-      version: persVersion,
+      version: latestVersion,
       entities: {
         items: EntityPers.getEmptyPers(),
         groups: EntityPers.getEmptyPers(),
@@ -94,9 +94,48 @@ export class PersonalizationProcessor extends PersBase {
         return;
       }
       console.warn(`Validation: Found and removed assignment to non-existing group ${item.group} in item ${key}.`);
-      this._addToTrash("PersonalizationProcessor", "items", { id: item.id, group: item.group });
+      LocalStorage.addToTrash("PersonalizationProcessor", "items", { id: item.id, group: item.group });
       item.group = null;
     });
+  }
+
+  static validate (pers) {
+    if (typeof pers !== "object") {
+      console.error("Validation: Invalid type");
+      return false;
+    }
+
+    const { version, entities } = pers;
+    if (!version || !entities) {
+      console.error("Validation: Invalid schema");
+      return false;
+    }
+
+    if (version !== latestVersion) {
+      console.error("Validation: Invalid personalization version");
+      return false;
+    }
+
+    const { items, groups } = entities;
+    if (!items || !groups) {
+      console.error("Validation: Invalid schema");
+      return false;
+    }
+
+    return EntityPers.validate(itemSchema, items) && EntityPers.validate(groupSchema, groups);
+  }
+
+  static hasCollisions (personalization1, personalization2) {
+    if (!this.validate(personalization1) || !this.validate(personalization2)) {
+      console.error("Could not check for collisions");
+      return false;
+    }
+
+    const { items: items1, groups: groups1 } = personalization1.entities;
+    const { items: items2, groups: groups2 } = personalization2.entities;
+    const collisionInItems = EntityPers.hasCollisions(itemSchema, items1, items2);
+    const collisionInGroups = EntityPers.hasCollisions(groupSchema, groups1, groups2);
+    return collisionInItems || collisionInGroups;
   }
 }
 

@@ -7,7 +7,7 @@ export const PERS_TYPES = {
   Unknown: "U", // might be set temporarily during merge of personalization
 };
 
-const persVersion = "1.0.0";
+const latestVersion = "1.0.0";
 
 export class EntityPers extends PersBase {
   static extractPers (schema, originalEntities = {}, personalizedEntities = {}) {
@@ -35,13 +35,13 @@ export class EntityPers extends PersBase {
     });
 
     return {
-      version: persVersion,
+      version: latestVersion,
       items: persItems,
     };
   }
 
   static applyPers (schema, originalEntities = {}, personalization = {}) {
-    if (personalization.version !== persVersion) {
+    if (!this.validate(schema, personalization)) {
       console.error("Could not apply personalization");
       return originalEntities;
     }
@@ -84,8 +84,7 @@ export class EntityPers extends PersBase {
 
   static mixPers (schema, personalization1 = {}, personalization2 = {}, mixLevel = MIX_LEVEL.Item) {
     // personalization1 has prio
-
-    if (personalization1.version !== persVersion || personalization2.version !== persVersion) {
+    if (!this.validate(schema, personalization1) || !this.validate(schema, personalization2)) {
       console.error("Could not mix personalization");
       return this.getEmptyPers();
     }
@@ -106,7 +105,7 @@ export class EntityPers extends PersBase {
       }, {});
 
       return {
-        version: persVersion,
+        version: latestVersion,
         items: [
           ...persItems1,
           ...persItems2.filter((persItem) => {
@@ -173,8 +172,76 @@ export class EntityPers extends PersBase {
 
   static getEmptyPers () {
     return {
-      version: persVersion,
+      version: latestVersion,
       items: [],
     };
+  }
+
+  static validate (schema, pers) {
+    if (typeof pers !== "object") {
+      console.error("Validation: Invalid entity type");
+      return false;
+    }
+
+    const { version, items } = pers;
+    if (!version || !items) {
+      console.error("Validation: Invalid entity schema");
+      return false;
+    }
+
+    if (version !== latestVersion) {
+      console.error("Validation: Invalid entity version");
+      return false;
+    }
+
+    return items.every((item) => {
+      if (typeof item !== "object") {
+        console.error("Validation: Invalid entity item type");
+        return false;
+      }
+
+      const { persType, entityDiff } = item;
+      if (!persType || !entityDiff) {
+        console.error("Validation: Invalid entity item schema");
+        return false;
+      }
+
+      if (persType === PERS_TYPES.New) {
+        return schema.isValidEntity(entityDiff);
+      }
+      if (persType !== PERS_TYPES.Modified) {
+        console.error("Validation: Invalid entity item persType");
+        return false;
+      }
+
+      let validDiff = true;
+      schema.forEachProp((propKey, propDefinition) => {
+        if (Object.hasOwn(entityDiff, propKey)) {
+          const propValue = entityDiff[propKey];
+          validDiff = validDiff === true ? propDefinition.validate(propValue) : false;
+        }
+      });
+
+      return validDiff;
+    });
+  }
+
+  static hasCollisions (schema, personalization1, personalization2) {
+    if (!this.validate(schema, personalization1) || !this.validate(schema, personalization2)) {
+      console.error("Could not check for collisions");
+      return false;
+    }
+    if (!personalization1.items.length || !personalization2.items.length) {
+      return false;
+    }
+
+    const itemMap = {};
+    personalization1.items.forEach((persItem) => {
+      itemMap[persItem.entityDiff.id] = true;
+    });
+    const freeOfCollisions = personalization2.items.every((persItem) => {
+      return !Object.hasOwn(itemMap, persItem.entityDiff.id);
+    });
+    return !freeOfCollisions;
   }
 }

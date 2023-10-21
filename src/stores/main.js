@@ -2,7 +2,7 @@ import { inject } from "vue";
 import { defineStore } from "pinia";
 import { v4 as uuidV4 } from "uuid";
 import { clone } from "@/js/utils";
-import { savePers } from "@/js/Personalization";
+import { saveData as saveData } from "@/js/Personalization";
 import { ENTITY_KEY, isValidEntity } from "@/js/personalization/PersonalizationProcessor.js";
 
 export const useMainStore = defineStore("main", {
@@ -97,7 +97,7 @@ export const useMainStore = defineStore("main", {
       this.saveData();
     },
     async saveData () {
-      await savePers();
+      await saveData();
     },
     getItem (itemId) {
       return this.items[itemId];

@@ -30,7 +30,7 @@ async function processFile () {
       fileError.value = ["File has invalid Extension"];
       throw new Error(`File has invalid Extension: ${file.name} > ${file.type}`);
     }
-    
+
     preImportData.value = await analyzeImportFile(file);
     importFileChecked.value = true;
   } catch (err) {

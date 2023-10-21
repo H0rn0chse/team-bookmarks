@@ -1,12 +1,11 @@
-import { compressToUTF16, decompressFromUTF16 } from "async-lz-string";
-
 import { useMainStore } from "@/stores/main";
-import { undefinedReplacer } from "@/js/utils";
 import { PersonalizationProcessor } from "./personalization/PersonalizationProcessor.js";
+import { LocalStorage } from "./LocalStorage.js";
 
 const localStorageKey = "team-bookmarks-personalization";
 const bookmarkRepoPath = "./team-bookmarks.json";
 
+// ========================== Load Data ========================
 let cachedPromise = null;
 function getDataFromRepo () {
   if (!cachedPromise) {
@@ -14,8 +13,6 @@ function getDataFromRepo () {
   }
   return cachedPromise;
 }
-
-export const getOriginalData = getDataFromRepo;
 
 let cachedResult = null;
 async function _getDataFromRepo () {
@@ -32,54 +29,9 @@ async function _getDataFromRepo () {
     };
   }
 }
+// =============================================================
 
-export function isOriginalItem (itemId) {
-  if (!cachedResult || !itemId) {
-    return false;
-  }
-  return !!cachedResult?.items?.[itemId];
-}
-
-export function isOriginalGroup (groupId) {
-  if (!cachedResult || !groupId) {
-    return false;
-  }
-  return !!cachedResult?.groups?.[groupId];
-}
-
-function isDebugMode () {
-  return !!localStorage.getItem("debugMode");
-}
-
-async function getCompressedItemFromLocalStorage (key) {
-  const compressedString = localStorage.getItem(key);
-  const decompressedString = await decompressFromUTF16(compressedString);
-  return decompressedString;
-}
-
-async function setCompressedItemToLocalStorage (key, string) {
-  const compressedString = await compressToUTF16(string);
-  localStorage.setItem(key, compressedString);
-  if (isDebugMode()) {
-    localStorage.setItem(`${key}-debug`, string);
-  }
-}
-
-async function getPersFromLocalStorage () {
-  const pers = await getCompressedItemFromLocalStorage(localStorageKey);
-  let parsedPers;
-  try {
-    parsedPers = JSON.parse(pers);
-  } catch (err) { /* */ }
-  if (!parsedPers) {
-    return PersonalizationProcessor.getEmptyPers();
-    // return {
-    //   version: "0.0.1",
-    //   diff: []
-    // };
-  }
-  return parsedPers;
-}
+export const getOriginalData = getDataFromRepo;
 
 /**
  * Fetches and validates the data and applies the personalization
@@ -90,16 +42,15 @@ export async function getData () {
   const pers = await getPersFromLocalStorage();
 
   // We could add a migration step here based on pers.version
-  const personalizedData = mixinPers(originalData, pers);
-  return personalizedData;
+  return mixinPers(originalData, pers);
 }
 
-export async function savePers () {
+export async function saveData () {
   const pers = await extractPers();
-  await setCompressedItemToLocalStorage(localStorageKey, JSON.stringify(pers, undefinedReplacer));
+  await LocalStorage.setCompressedJsonObject(localStorageKey, pers);
 }
 
-export async function extractPers (originalData, personalizedData) { // used for export and savePers
+export async function extractPers (originalData, personalizedData) { // used for export and saveData
   if (!originalData || !personalizedData) {
     const mainStore = useMainStore();
     personalizedData = mainStore.getExportData();
@@ -123,8 +74,16 @@ export async function applyPers (originalData, ...pers) { // used for import onl
   return personalizedData;
 }
 
+async function getPersFromLocalStorage () {
+  const pers = await LocalStorage.getCompressedJsonObject(localStorageKey);
+  if (!pers) {
+    return PersonalizationProcessor.getEmptyPers();
+  }
+  return pers;
+}
+
 /**
- * Mixes personalization into the original data
+ * Mixes personalization into the "original" data
  * Handles inconsistencies in the personalization
  * @param {object} originalData
  * @param {object} pers
@@ -132,4 +91,29 @@ export async function applyPers (originalData, ...pers) { // used for import onl
  */
 function mixinPers (originalData, pers) {
   return PersonalizationProcessor.applyPers(originalData, pers);
+}
+
+//===================== Helper ============================
+
+export async function hasCollisionsWithCurrentPersonalization (pers) {
+  const currentPers = await extractPers();
+  return PersonalizationProcessor.hasCollisions(currentPers, pers);
+}
+
+export function validatePersonalization (pers) {
+  return PersonalizationProcessor.validate(pers);
+}
+
+export function isOriginalItem (itemId) {
+  if (!cachedResult || !itemId) {
+    return false;
+  }
+  return !!cachedResult?.items?.[itemId];
+}
+
+export function isOriginalGroup (groupId) {
+  if (!cachedResult || !groupId) {
+    return false;
+  }
+  return !!cachedResult?.groups?.[groupId];
 }
