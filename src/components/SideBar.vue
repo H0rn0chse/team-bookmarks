@@ -1,9 +1,7 @@
 <script setup>
-import { readonly, inject } from "vue";
+import { readonly } from "vue";
 import { useDialogStore } from "@/stores/dialog";
-import { importData, exportData, IMPORT_SCOPE, EXPORT_SCOPE } from "@/js/ImportExport";
-
-const confirm = inject("confirm");
+import { exportData, EXPORT_SCOPE } from "@/js/ImportExport";
 
 const dialogStore = useDialogStore();
 
@@ -11,33 +9,6 @@ const icons = readonly({
   size: "3em",
   color: "var(--common-font-primary)"
 });
-
-async function importDataLocal (scope) {
-  let confirmationMessage;
-  switch (scope) {
-    case IMPORT_SCOPE.deleteOldPersAndImport:
-      confirmationMessage = "Are you sure? This Action will permanently remove your existing Tags and Bookmarks!";
-      break;
-    case IMPORT_SCOPE.propertyMergeItems_PrioImport:
-    case IMPORT_SCOPE.propertyMergeItems_PrioPers:
-      confirmationMessage = "Are you sure? This Action might permanently change your existing Tags and Bookmarks!";
-      break;
-    case IMPORT_SCOPE.mergeOnlyNewItems:
-      break;
-    default:
-      console.error(`scope ${scope} is not implemented yet`);
-      return;
-  }
-
-  let userConfirmed = true;
-  if (confirmationMessage) {
-    userConfirmed = await confirm(confirmationMessage);
-  }
-
-  if (userConfirmed) {
-    await importData(scope);
-  }
-}
 
 async function exportDataLocal (scope) {
   if (!EXPORT_SCOPE[scope]) {
@@ -79,48 +50,6 @@ function showImportDialog () {
           type="upload-cloud"
         />
       </div>
-      <v-menu
-        activator="#importBtn2"
-        location="end"
-      >
-        <v-card class="optionsCard">
-          <v-card-title>
-            Import Options
-          </v-card-title>
-          <div class="d-flex flex-column align-start">
-            <v-btn
-              variant="flat"
-              @click="importDataLocal(IMPORT_SCOPE.deleteOldPersAndImport)"
-            >
-              Clean Import
-            </v-btn>
-            <v-btn
-              variant="flat"
-              @click="importDataLocal(IMPORT_SCOPE.propertyMergeItems_PrioImport)"
-            >
-              Merge: Merge Items (Import > Pers)
-            </v-btn>
-            <v-btn
-              variant="flat"
-              @click="importDataLocal(IMPORT_SCOPE.propertyMergeItems_PrioPers)"
-            >
-              Merge: Merge Items (Pers > Import)
-            </v-btn>
-            <v-btn
-              variant="flat"
-              @click="importDataLocal(IMPORT_SCOPE.mergeOnlyNewItems)"
-            >
-              Merge: Import Only new Items
-            </v-btn>
-            <v-btn
-              variant="flat"
-              @click="importDataLocal(IMPORT_SCOPE.overrideExistingItems)"
-            >
-              Merge: Override Existing Items
-            </v-btn>
-          </div>
-        </v-card>
-      </v-menu>
       <div
         id="exportBtn"
         title="Export"

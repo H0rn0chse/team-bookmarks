@@ -43,7 +43,7 @@ export class PersonalizationProcessor extends PersBase {
   static applyPers (originalData, personalization) {
     if (!this.validate(personalization)) {
       console.error("Could not apply personalization");
-      return originalData;
+      return;
     }
 
     const { items, groups } = personalization.entities;
@@ -68,8 +68,8 @@ export class PersonalizationProcessor extends PersBase {
 
     return {
       entities: {
-        items: EntityPers.mix(itemSchema, items1, items2, mixLevel),
-        groups: EntityPers.mix(groupSchema, groups1, groups2, mixLevel),
+        items: EntityPers.mixPers(itemSchema, items1, items2, mixLevel),
+        groups: EntityPers.mixPers(groupSchema, groups1, groups2, mixLevel),
       },
       version: latestVersion
     };

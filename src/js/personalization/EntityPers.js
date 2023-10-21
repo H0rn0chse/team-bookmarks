@@ -43,7 +43,7 @@ export class EntityPers extends PersBase {
   static applyPers (schema, originalEntities = {}, personalization = {}) {
     if (!this.validate(schema, personalization)) {
       console.error("Could not apply personalization");
-      return originalEntities;
+      return;
     }
 
     const personalizedEntities = personalization.items.reduce((personalizedEntities, { type, entityDiff }) => {
@@ -141,7 +141,10 @@ export class EntityPers extends PersBase {
         return persMap;
       }, persMap);
 
-      return Object.values(persMap);
+      return {
+        version: latestVersion,
+        items: Object.values(persMap)
+      };
     }
 
     throw new Error("Unsupported mixLevel!");
@@ -154,8 +157,11 @@ export class EntityPers extends PersBase {
     schema.forEachProp((propKey, propDefinition) => {
       const propValue1 = pers1[propKey];
       const propValue2 = pers2[propKey];
-      if (!propDefinition.validate(propValue1) && !propDefinition.validate(propValue2)) {
+
+      if (propDefinition.validate(propValue2)) {
         mixedPers[propKey] = propValue2;
+      } else if (propDefinition.validate(propValue1)) {
+        mixedPers[propKey] = propValue1;
       }
     });
 

@@ -1,7 +1,7 @@
 <script setup>
 import { ref, inject, computed, readonly } from "vue";
 import { useDialogStore } from "@/stores/dialog";
-import { analyzeImportFile, IMPORT_SCOPE, MERGE_STRATEGY } from "@/js/ImportExport";
+import { analyzeImportFile, IMPORT_SCOPE, MERGE_STRATEGY, importFile } from "@/js/ImportExport";
 
 const dialogStore = useDialogStore();
 const confirm = inject("confirm");
@@ -12,7 +12,7 @@ const MergeStrategy = readonly(MERGE_STRATEGY);
 const busy = ref(false);
 
 const importFileChecked = ref(false);
-const importFile = ref([]);
+const importFileRef = ref([]);
 const fileError = ref([]);
 const preImportData = ref(null);
 
@@ -20,7 +20,7 @@ async function processFile () {
   busy.value = true;
   fileError.value = [];
   try {
-    const files = importFile.value;
+    const files = importFileRef.value;
     if (!files.length) {
       fileError.value = ["No File selected"];
       throw new Error("No File selected");
@@ -75,7 +75,7 @@ const strategyData = computed(() => {
 function resetDialog () {
   // preImport
   importFileChecked.value = false;
-  importFile.value = [];
+  importFileRef.value = [];
   fileError.value = [];
   preImportData.value = null;
   //merge strategy
@@ -83,8 +83,19 @@ function resetDialog () {
   mergeStrategy.value = MergeStrategy.PreferPers;
 }
 
-function startImport () {
-  alert(`start ${importOption.value} with ${mergeStrategy.value}`);
+async function startImport () {
+  console.log(`Import: start ${importOption.value} with ${mergeStrategy.value}`);
+  const confirmationMessage = "Are you sure? This Action will permanently change your existing Tags and Bookmarks!";
+
+  let userConfirmed = true;
+  if (confirmationMessage) {
+    userConfirmed = await confirm(confirmationMessage);
+  }
+
+  if (userConfirmed) {
+    await importFile(importFileRef.value[0], importOption.value, mergeStrategy.value);
+  }
+
   dialogStore.hideImport();
   setTimeout(resetDialog, 1000);
 }
@@ -126,7 +137,7 @@ function onDialogHideShow (visible) {
           Please select the import file.
         </p>
         <v-file-input
-          v-model="importFile"
+          v-model="importFileRef"
           label="Import File"
           accept=".json"
           :error="fileError.length"

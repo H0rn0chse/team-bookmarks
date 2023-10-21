@@ -1,6 +1,6 @@
 import { useMainStore } from "@/stores/main";
 import { useSearchStore } from "@/stores/search";
-import { applyPers, extractPers, getOriginalData, hasCollisionsWithCurrentPersonalization, validatePersonalization } from "@/js/Personalization";
+import { applyPers, extractPers, getOriginalData, hasCollisionsWithCurrentPersonalization, mixPersOnItemLevel, mixPersOnPropertyLevel, validatePersonalization } from "@/js/Personalization";
 import { undefinedReplacer } from "@/js/utils";
 
 let _fileHandler;
@@ -8,7 +8,6 @@ let currentImportScope = null;
 
 export const IMPORT_SCOPE = {
   CleanImport: "CleanImport",
-  mergeOnlyNewItems: "mergeOnlyNewItems",
   MergeOnItemLevel: "MergeOnItemLevel",
   MergeOnPropLevel: "MergeOnPropLevel"
 };
@@ -90,9 +89,8 @@ export async function importFile (file, importScope, mergeStrategy) {
   const persText = await readFileAsText(file);
   try {
     const importedData = JSON.parse(persText);
+    // validation already happened in pre import
     // todo migrate
-    // todo validate
-    // todo check collisions
     const personalizedData = await getImportData(importedData, importScope, mergeStrategy);
 
     const mainStore = useMainStore();
@@ -103,64 +101,41 @@ export async function importFile (file, importScope, mergeStrategy) {
   }
 }
 
-async function getImportData (importedData, scope) {
+async function getImportData (importedData, scope, strategy) {
   let personalizedData;
-  const mainStore = useMainStore();
   const originalData = await getOriginalData();
+  const currentPers = await extractPers();
+  let importedPers;
 
   if (scope === IMPORT_SCOPE.CleanImport) {
     personalizedData = await applyPers(originalData, importedData);
+    return personalizedData;
 
   } else if (scope === IMPORT_SCOPE.MergeOnItemLevel) {
-    personalizedData = mainStore.getExportData();
-    personalizedData = await applyPers(personalizedData, importedData);
+    if (strategy === MERGE_STRATEGY.PreferImport) {
+      importedPers = mixPersOnItemLevel(importedData, currentPers);
 
-  } else if (scope === IMPORT_SCOPE.propertyMergeItems_PrioPers) {
-    const currentPers = await extractPers();
-    personalizedData = await applyPers(originalData, importedData, currentPers);
+    } else if (strategy === MERGE_STRATEGY.PreferPers) {
+      importedPers = mixPersOnItemLevel(currentPers, importedData);
 
-  } else if (scope === IMPORT_SCOPE.mergeOnlyNewItems) {
-    personalizedData = mainStore.getExportData();
-    const currentPers = await extractPers();
-    // filter importedData based on current personalization diff
-    if (importedData.diff.items) {
-      Object.keys(importedData.diff.items).forEach((itemId) => {
-        if (currentPers.diff?.items?.[itemId]) {
-          delete importedData.diff.items[itemId];
-        }
-      });
+    } else {
+      throw new Error("Unexpected Error");
     }
-    if (importedData.diff.groups) {
-      Object.keys(importedData.diff.groups).forEach((groupId) => {
-        if (currentPers.diff?.groups?.[groupId]) {
-          delete importedData.diff.groups[groupId];
-        }
-      });
-    }
-    personalizedData = await applyPers(personalizedData, importedData);
+  } else if (scope === IMPORT_SCOPE.MergeOnPropLevel) {
+    if (strategy === MERGE_STRATEGY.PreferImport) {
+      importedPers = mixPersOnPropertyLevel(importedData, currentPers);
 
-  } else if (scope === IMPORT_SCOPE.overrideExistingItems) {
-    const currentPers = await extractPers();
-    // remove existing personalization for imported items
-    if (currentPers.diff.items) {
-      Object.keys(currentPers.diff.items).forEach((itemId) => {
-        if (importedData.diff?.items?.[itemId]) {
-          delete currentPers.diff.items[itemId];
-        }
-      });
-    }
-    if (currentPers.diff.groups) {
-      Object.keys(importedData.diff.groups).forEach((groupId) => {
-        if (importedData.diff?.groups?.[groupId]) {
-          delete currentPers.diff.groups[groupId];
-        }
-      });
-    }
-    personalizedData = await applyPers(originalData, currentPers, importedData);
+    } else if (strategy === MERGE_STRATEGY.PreferPers) {
+      importedPers = mixPersOnPropertyLevel(currentPers, importedData);
 
+    } else {
+      throw new Error("Unexpected Error");
+    }
   } else {
     throw new Error("Unsupported Import Scope");
   }
+
+  personalizedData = await applyPers(originalData, importedPers);
 
   return personalizedData;
 }

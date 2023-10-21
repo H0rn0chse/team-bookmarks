@@ -1,6 +1,7 @@
 import { useMainStore } from "@/stores/main";
 import { PersonalizationProcessor } from "./personalization/PersonalizationProcessor.js";
 import { LocalStorage } from "./LocalStorage.js";
+import { MIX_LEVEL } from "./personalization/PersBase.js";
 
 const localStorageKey = "team-bookmarks-personalization";
 const bookmarkRepoPath = "./team-bookmarks.json";
@@ -39,15 +40,15 @@ export const getOriginalData = getDataFromRepo;
  */
 export async function getData () {
   const originalData = await getDataFromRepo();
-  const pers = await getPersFromLocalStorage();
+  const personalization = await getPersFromLocalStorage();
 
   // We could add a migration step here based on pers.version
-  return mixinPers(originalData, pers);
+  return mixinPers(originalData, personalization);
 }
 
 export async function saveData () {
-  const pers = await extractPers();
-  await LocalStorage.setCompressedJsonObject(localStorageKey, pers);
+  const personalization = await extractPers();
+  await LocalStorage.setCompressedJsonObject(localStorageKey, personalization);
 }
 
 export async function extractPers (originalData, personalizedData) { // used for export and saveData
@@ -66,42 +67,50 @@ export async function extractPers (originalData, personalizedData) { // used for
  * @param {...object} pers A personalization object containing a diff
  * @returns {object}
  */
-export async function applyPers (originalData, ...pers) { // used for import only
+export async function applyPers (originalData, ...personalizationList) { // used for import only
   let personalizedData = originalData;
-  pers.forEach(({ diff }) => {
-    personalizedData = mixinPers(personalizedData, diff);
+  personalizationList.forEach((personalization) => {
+    personalizedData = mixinPers(personalizedData, personalization);
   });
   return personalizedData;
 }
 
 async function getPersFromLocalStorage () {
-  const pers = await LocalStorage.getCompressedJsonObject(localStorageKey);
-  if (!pers) {
+  const personalization = await LocalStorage.getCompressedJsonObject(localStorageKey);
+  if (!personalization) {
     return PersonalizationProcessor.getEmptyPers();
   }
-  return pers;
+  return personalization;
 }
 
 /**
  * Mixes personalization into the "original" data
  * Handles inconsistencies in the personalization
  * @param {object} originalData
- * @param {object} pers
+ * @param {object} personalization
  * @returns {object} The personalized data
  */
-function mixinPers (originalData, pers) {
-  return PersonalizationProcessor.applyPers(originalData, pers);
+function mixinPers (originalData, personalization) {
+  return PersonalizationProcessor.applyPers(originalData, personalization);
+}
+
+export function mixPersOnItemLevel (personalization1, personalization2) {
+  return PersonalizationProcessor.mixPers(personalization1, personalization2, MIX_LEVEL.Item);
+}
+
+export function mixPersOnPropertyLevel (personalization1, personalization2) {
+  return PersonalizationProcessor.mixPers(personalization1, personalization2, MIX_LEVEL.Property);
 }
 
 //===================== Helper ============================
 
-export async function hasCollisionsWithCurrentPersonalization (pers) {
+export async function hasCollisionsWithCurrentPersonalization (personalization) {
   const currentPers = await extractPers();
-  return PersonalizationProcessor.hasCollisions(currentPers, pers);
+  return PersonalizationProcessor.hasCollisions(currentPers, personalization);
 }
 
-export function validatePersonalization (pers) {
-  return PersonalizationProcessor.validate(pers);
+export function validatePersonalization (personalization) {
+  return PersonalizationProcessor.validate(personalization);
 }
 
 export function isOriginalItem (itemId) {
