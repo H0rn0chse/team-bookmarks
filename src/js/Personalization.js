@@ -2,6 +2,7 @@ import { useMainStore } from "@/stores/main";
 import { PersonalizationProcessor } from "./personalization/PersonalizationProcessor.js";
 import { LocalStorage } from "./LocalStorage.js";
 import { MIX_LEVEL } from "./personalization/PersBase.js";
+import { clone } from "./utils.js";
 
 const localStorageKey = "team-bookmarks-personalization";
 const bookmarkRepoPath = "./team-bookmarks.json";
@@ -41,9 +42,22 @@ export const getOriginalData = getDataFromRepo;
 export async function getData () {
   const originalData = await getDataFromRepo();
   const personalization = await getPersFromLocalStorage();
+  let personalizedData;
 
   // We could add a migration step here based on pers.version
-  return mixinPers(originalData, personalization);
+  try {
+    personalizedData = mixinPers(originalData, personalization);
+  } catch (err) {
+    console.error(`Could not apply personalization: ${err}`);
+  }
+
+  // personalization failed backup on
+  if (!personalizedData) {
+    LocalStorage.dump(`${localStorageKey}-${Date.now()}`, personalization);
+    personalizedData = clone(originalData);
+  }
+
+  return personalizedData;
 }
 
 export async function saveData () {

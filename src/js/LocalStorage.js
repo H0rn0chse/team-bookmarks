@@ -9,12 +9,13 @@ function isDebugMode () {
 
 export class LocalStorage {
   static getJsonObject (key) {
+    const string = localStorage.getItem(key);
     try {
-      const string = localStorage.getItem(key);
       const data = JSON.parse(string);
       return data;
     } catch (err) {
       console.error(`Could not read data from localStorage: ${err}`);
+      localStorage.setItem(`${key}-${Date.now()}`, string);
     }
   }
 
@@ -27,14 +28,27 @@ export class LocalStorage {
     }
   }
 
-  static async getCompressedJsonObject (key) {
+  static dump (key, data) {
+    if (typeof data === "string") {
+      localStorage.setItem(key, data);
+      return;
+    }
+
     try {
-      const compressedString = localStorage.getItem(key);
+      const string = JSON.stringify(data, null, undefinedReplacer);
+      localStorage.setItem(key, string);
+    } catch { /* */ }
+  }
+
+  static async getCompressedJsonObject (key) {
+    const compressedString = localStorage.getItem(key);
+    try {
       const string = await decompressFromUTF16(compressedString);
       const data = JSON.parse(string);
       return data;
     } catch (err) {
       console.error(`Could not read data from localStorage: ${err}`);
+      localStorage.setItem(`${key}-${Date.now()}`, compressedString);
     }
   }
 
