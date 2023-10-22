@@ -20,6 +20,14 @@ const error = ref(null);
 provide("showError", (message) => {
   return error.value.show(message);
 });
+
+addEventListener("keydown", (evt) => {
+  const blockedKeys = ["Space","ArrowUp","ArrowDown","ArrowLeft","ArrowRight"];
+  if(blockedKeys.includes(evt.code)) {
+    evt.preventDefault();
+  }
+}, false);
+
 </script>
 
 <template>

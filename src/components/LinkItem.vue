@@ -78,15 +78,13 @@ const favorite = computed(() => {
     class="item"
     :style="containerStyles"
   >
-    <div
-      class="itemContainer flexContainer"
-      @click="emit('moreClick')"
-    >
+    <div class="itemContainer flexContainer">
       <div class="start shrinking flexContainer">
         <a
           class="link shrinking flexContainer"
           :href="props.src"
           :target="linkTarget"
+          tabindex="0"
         >
           <span class="linkText shrinking">
             {{ props.title }}
@@ -105,6 +103,7 @@ const favorite = computed(() => {
           :stroke="favorite.stroke"
           :fill="favorite.fill"
           type="star"
+          tabindex="0"
           @click="emit('favoriteClick')"
         />
       </div>
@@ -114,6 +113,7 @@ const favorite = computed(() => {
           class="itemIcon"
           :size="iconSize"
           type="more-horizontal"
+          tabindex="0"
           @click="emit('moreClick')"
         />
       </div>

@@ -31,6 +31,23 @@ const container = ref(null);
 function scrollTop () {
   container.value.scrollTop = 0;
 }
+
+function focusNextItem (itemId) {
+  const index = preparedItems.value.findIndex((item) => item.id === itemId);
+  const target = container.value.querySelectorAll("li")[index + 1];
+  if (target) {
+    target.focus();
+  }
+}
+
+function focusPrevItem (itemId) {
+  const index = preparedItems.value.findIndex((item) => item.id === itemId);
+  const target = container.value.querySelectorAll("li")[index - 1];
+  if (target) {
+    target.focus();
+  }
+}
+
 </script>
 
 <template>
@@ -41,6 +58,7 @@ function scrollTop () {
     <LinkItem
       v-for="item in preparedItems"
       :key="item.id"
+      class="item"
       tag="li"
       :title="item.title"
       :src="item.src"
@@ -48,8 +66,14 @@ function scrollTop () {
       :font-color="item.groupColor"
       :is-favorite="item.favorite"
       :hidden="item.hidden"
+      tabindex="0"
+      @click="showBookmarkDetail(item.id)"
       @favorite-click="toggleFavorite(item.id)"
       @more-click="showBookmarkDetail(item.id)"
+      @keyup.down="focusNextItem(item.id)"
+      @keyup.right="focusNextItem(item.id)"
+      @keyup.up="focusPrevItem(item.id)"
+      @keyup.left="focusPrevItem(item.id)"
     />
     <v-btn
       id="btn-toTop"
@@ -78,69 +102,6 @@ a, a:visited {
   right: 4em;
 }
 
-.itemIcon {
-  margin-left: 1em;
-  cursor: pointer;
-}
-
-.item {
-  display: block;
-  max-width: 30em;
-  min-height: calc(2.5em + 4px);
-  min-width: 5em;
-  border-color: var(--common-font-secondary);
-  border-width: 2px;
-  border-style: solid;
-  border-radius: 10px;
-  margin: 1em;
-  padding: 0.5em;
-}
-
-.item:hover {
-  filter: brightness(130%);
-}
-
-@media only screen and (min-width: 960px) {
-  .item {
-    width: 30em;
-  }
-}
-
-.flexContainer {
-  display: flex;
-  flex-direction: row;
-  justify-content: center;
-  align-items: center;
-  overflow: hidden;
-}
-
-.growing {
-  flex-grow: 1;
-  flex-shrink: 0;
-}
-
-.shrinking {
-  flex-shrink: 1;
-  min-width: 0;
-}
-
-.start {
-  justify-content: flex-start;
-}
-
-.linkText {
-  justify-content: flex-start;
-  overflow: hidden;
-}
-
-.linkIcon {
-  margin-left: 0.2em;
-}
-
-.end {
-  justify-content: flex-end;
-}
-
 .containerList {
   display: flex;
   flex-wrap: wrap;
@@ -162,4 +123,9 @@ a, a:visited {
     padding: 4em;
   }
 }
+
+.item:focus {
+  outline-offset: 5px;
+}
+
 </style>
