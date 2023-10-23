@@ -143,12 +143,17 @@ export const useMainStore = defineStore("main", {
       this.saveData();
     },
     updateItem (itemId, props) {
-      if (!isValidEntity(ENTITY_KEY.Item, props)) {
+      const item = this.items[itemId];
+      const validationItem = {
+        ...item,
+        ...props
+      };
+
+      if (!isValidEntity(ENTITY_KEY.Item, validationItem)) {
         console.error("Late validation failed unexpectedly");
         this.showError("Bookmark could not be updated");
       }
 
-      const item = this.items[itemId];
       if (item) {
         Object.keys(props).forEach((key) => {
           const value = props[key];
