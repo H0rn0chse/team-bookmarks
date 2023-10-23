@@ -85,6 +85,7 @@ const favorite = computed(() => {
           :href="props.src"
           :target="linkTarget"
           tabindex="0"
+          @click.stop=""
         >
           <span class="linkText shrinking">
             {{ props.title }}
@@ -104,7 +105,7 @@ const favorite = computed(() => {
           :fill="favorite.fill"
           type="star"
           tabindex="0"
-          @click="emit('favoriteClick')"
+          @click.stop="emit('favoriteClick')"
         />
       </div>
       <div class="end growing flexContainer">
