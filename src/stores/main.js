@@ -52,9 +52,9 @@ export const useMainStore = defineStore("main", {
           const keywords = new Set(item.keywords);
           const group = state.groups[item.group];
 
-          item.title && keywords.add(item.title.toLowerCase());
-          item.description && keywords.add(item.description.toLowerCase());
-          group?.title && keywords.add((group?.title || "").toLowerCase());
+          item.title && keywords.add(item.title);
+          item.description && keywords.add(item.description);
+          group?.title && keywords.add((group?.title || ""));
 
           return {
             id: item.id,

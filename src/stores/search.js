@@ -48,7 +48,7 @@ export const useSearchStore = defineStore("search", () => {
 
         // keywords
         return searchTerms.value.every(term => {
-          return item.searchStrings.some(string => string.includes(term.toLowerCase()));
+          return item.searchStrings.some(string => string.toLowerCase().includes(term.toLowerCase()));
         });
       })
       .map(item => item.id);
