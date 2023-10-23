@@ -199,12 +199,17 @@ export const useMainStore = defineStore("main", {
       this.saveData();
     },
     updateGroup (groupId, props) {
-      if (!isValidEntity(ENTITY_KEY.Group, props)) {
+      const group = this.groups[groupId];
+      const validationGroup = {
+        ...group,
+        ...props
+      };
+
+      if (!isValidEntity(ENTITY_KEY.Group, validationGroup)) {
         console.error("Late validation failed unexpectedly");
         this.showError("Group could not be updated");
       }
 
-      const group = this.groups[groupId];
       if (group) {
         Object.keys(props).forEach((key) => {
           const value = props[key];

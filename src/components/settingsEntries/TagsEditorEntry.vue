@@ -71,8 +71,8 @@ async function deleteTag () {
 function addNewTag () {
   let newTag = {
     title: "New Tag",
-    background: "#000",
-    color: "#FFF"
+    background: "#000000",
+    color: "#FFFFFF"
   };
   const idOfNewTag = mainStore.addGroup(newTag);
   setSelectedTag(preparedTags.value[idOfNewTag]);
